@@ -230,6 +230,14 @@ angular.module('ui.rCalendar', [])
         self.placeAllDayEvents = function (orderedEvents) {
             calculatePosition(orderedEvents);
         };
+
+        $scope.hoverIn = function(){
+            this.hoverPopup = true;
+        };
+
+        $scope.hoverOut = function(){
+            this.hoverPopup = false;
+        }
     }])
     .directive('calendar', function () {
         'use strict';
