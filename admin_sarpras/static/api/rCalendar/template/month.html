@@ -30,9 +30,9 @@
                         'monthview-secondary-with-event': dt.secondary&&dt.hasEvent, 
                         'monthview-primary-with-event':!dt.secondary&&dt.hasEvent&&!dt.selected, 
                         'monthview-selected': dt.selected}"  ng-mouseover="hoverIn()" ng-mouseleave="hoverOut()">
-                        <p style="margin-bottom: 0">{{event.title}}</p>
-                        <p style="font-size: 70%;margin-bottom: 0">{{event.startTime | date:'HH:mm': 'UTC+0700' }} - {{event.endTime | date:'HH:mm': 'UTC+0700' }}</p>
-                        <div ng-show="hoverPopup" style="margin-bottom:1rem">
+                        <div style="margin-bottom: 0">{{event.title}}</div>
+                        <div style="margin-bottom: 0">{{event.startTime | date:'HH:mm': 'UTC+0700' }} - {{event.endTime | date:'HH:mm': 'UTC+0700' }}</div>
+                        <div ng-show="hoverPopup" style="margin-bottom:1rem; position:absolute; padding:5px; max-width:120px; background-color: {{event.warnaRuang}};>
                             <hr style="margin:0" />
                             {{event.borrower}}
                             <hr style="margin:0" />
