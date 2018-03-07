@@ -146,6 +146,7 @@
 			localStorage.defaultColor == '#000000';
 		}
 		$('#id_warna').val(localStorage.defaultColor);
+		$('#default-color-picker').val(localStorage.defaultColor);
 		$('#default-color-picker').change(function() {
 			localStorage.defaultColor = $('#default-color-picker').val();
 		});
