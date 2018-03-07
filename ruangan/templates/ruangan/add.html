@@ -79,16 +79,21 @@
 						<div class="input-group" style="text-align: center">
 							<label class="btn btn-default btn-sm">
 								Pilih warna
-								<input name="warna" id="id_warna" type="color" required class="form-control" value="#00FF00"/>
+								<input name="warna" id="id_warna" type="color" required class="form-control"/>
 							</label>
 							<span class="input-group-addon" style="font-size: 150%;color: red;padding-left: 15px">*</span>
 						</div>
 					</div>
-					<div class="col-lg-offset-1 col-lg-1">
+					<div class="col-lg-1">
 						<div class="dropdown">
 							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span></button>
 							<ul class="dropdown-menu">
-								<li><a href="#">Pasang sebagai default</a></li>
+								<li>
+									<label class="btn btn-default btn-sm">
+										Ganti warna default
+										<input id="default-color-picker" type="color" class="form-control"/>
+									</label>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -135,5 +140,16 @@
     </div>
 </div>
 </div>
+<script>
+	$(function() {
+		if (localStorage.defaultColor === undefined) {
+			localStorage.defaultColor == '#000000';
+		}
+		$('#id_warna').val(localStorage.defaultColor);
+		$('#default-color-picker').change(function() {
+			localStorage.defaultColor = $('#default-color-picker').val();
+		});
+	});
+</script>
 {% endblock %}
 
