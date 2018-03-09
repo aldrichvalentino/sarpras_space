@@ -74,16 +74,41 @@
 				</div>
 
 				<div class="form-group">
-					<label for="id_warna" class="control-label col-lg-3">Warna Ruangan</label>					
-					<div class="col-lg-2">
-						<div class="input-group" style="text-align: center">
+					<label for="id_warna" class="control-label col-lg-3 col-xs-12">Warna Ruangan</label>					
+					<div class="col-lg-6 col-xs-6" style="text-align: left;">
+						<div class="input-group">
 							<label class="btn btn-default btn-sm">
 								Pilih warna
-								<input name="warna" id="id_warna" type="color" required class="form-control" ng-model="warna" />
+								<input name="warna" id="id_warna" type="color" required class="form-control"/>
 							</label>
-							<span class="input-group-addon" style="font-size: 150%;color: red;padding-left: 15px">*</span>
+							<span style="padding-left: 6px; font-size: 150%; color: red;">*</span>
 						</div>
-					</div>					
+					</div>
+					<div class="col-lg-3 col-xs-6" style="margin-top: 1rem; text-align: right;">
+						<div class="dropdown">
+							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span></button>
+							<ul class="dropdown-menu">
+								<li>
+									<label class="btn btn-default btn-sm">
+										Ganti warna default ruang   
+										<input id="Ruang-color-picker" type="color" class="form-control"/>
+									</label>
+								</li>
+								<li>
+									<label class="btn btn-default btn-sm">
+										Ganti warna default selasar 
+										<input id="Selasar-color-picker" type="color" class="form-control"/>
+									</label>
+								</li>
+								<li>
+									<label class="btn btn-default btn-sm">
+										Ganti warna default lapangan
+										<input id="Lapangan-color-picker" type="color" class="form-control"/>
+									</label>
+								</li>
+							</ul>
+						</div>
+					</div>
 				</div>
 
 				<div class="form-group">
@@ -127,5 +152,26 @@
     </div>
 </div>
 </div>
+<script>
+	function setColorPicker (type, color) {
+		if (localStorage[type + 'Color'] === undefined) {
+			localStorage[type + 'Color'] = color;
+		}
+		$('#' + type + '-color-picker').val(localStorage[type + 'Color']);
+		$('#' + type + '-color-picker').change(function() {
+			localStorage[type + 'Color'] = $('#' + type + '-color-picker').val();
+		});
+	}
+	$(function() {
+		setColorPicker('Ruang', '#ff0000');
+		setColorPicker('Selasar', '#00ff00');
+		setColorPicker('Lapangan', '#0000ff');
+		
+		$('#id_warna').val(localStorage[$('#id_tipe').val() + 'Color']);
+		$('#id_tipe').change(function() {
+			$('#id_warna').val(localStorage[$('#id_tipe').val() + 'Color']);
+		});
+	});
+</script>
 {% endblock %}
 
