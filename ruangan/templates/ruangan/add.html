@@ -90,8 +90,20 @@
 							<ul class="dropdown-menu">
 								<li>
 									<label class="btn btn-default btn-sm">
-										Ganti warna default
-										<input id="default-color-picker" type="color" class="form-control"/>
+										Ganti warna default ruang   
+										<input id="Ruang-color-picker" type="color" class="form-control"/>
+									</label>
+								</li>
+								<li>
+									<label class="btn btn-default btn-sm">
+										Ganti warna default selasar 
+										<input id="Selasar-color-picker" type="color" class="form-control"/>
+									</label>
+								</li>
+								<li>
+									<label class="btn btn-default btn-sm">
+										Ganti warna default lapangan
+										<input id="Lapangan-color-picker" type="color" class="form-control"/>
 									</label>
 								</li>
 							</ul>
@@ -141,14 +153,23 @@
 </div>
 </div>
 <script>
-	$(function() {
-		if (localStorage.defaultColor === undefined) {
-			localStorage.defaultColor == '#000000';
+	function setColorPicker (type, color) {
+		if (localStorage[type + 'Color'] === undefined) {
+			localStorage[type + 'Color'] = color;
 		}
-		$('#id_warna').val(localStorage.defaultColor);
-		$('#default-color-picker').val(localStorage.defaultColor);
-		$('#default-color-picker').change(function() {
-			localStorage.defaultColor = $('#default-color-picker').val();
+		$('#' + type + '-color-picker').val(localStorage[type + 'Color']);
+		$('#' + type + '-color-picker').change(function() {
+			localStorage[type + 'Color'] = $('#' + type + '-color-picker').val();
+		});
+	}
+	$(function() {
+		setColorPicker('Ruang', '#ff0000');
+		setColorPicker('Selasar', '#00ff00');
+		setColorPicker('Lapangan', '#0000ff');
+		
+		$('#id_warna').val(localStorage[$('#id_tipe').val() + 'Color']);
+		$('#id_tipe').change(function() {
+			$('#id_warna').val(localStorage[$('#id_tipe').val() + 'Color']);
 		});
 	});
 </script>
