@@ -24,10 +24,20 @@
                         <p style="margin-bottom: 0;font-size: 6px" ng-hide="dt.events.length"><br></p>
                     </div>
                     <b class="hidden-xs hidden-sm">{{dt.label}}</b>
-                    <div ng-repeat="event in dt.events | orderBy : event.title" style="margin: 2px;{{!dt.selected ? 'background-color :' + event.warnaRuang : ''}}" class="hidden-xs hidden-sm"
-                    ng-class="{'monthview-current': dt.current&&!dt.selected&&!dt.hasEvent,'monthview-secondary-with-event': dt.secondary&&dt.hasEvent, 'monthview-primary-with-event':!dt.secondary&&dt.hasEvent&&!dt.selected, 'monthview-selected': dt.selected}">
-                        <p style="margin-bottom: 0">{{event.title}}</p>
-                        <p style="font-size: 70%;margin-bottom: 0">{{event.startTime | date:'HH:mm': 'UTC+0700' }} - {{event.endTime | date:'HH:mm': 'UTC+0700' }}</p>
+                    <div ng-repeat="event in dt.events | orderBy : event.title" style="margin: 2px;{{!dt.selected ? 'background-color :' + event.warnaRuang : ''}}; color: #FFF" 
+                        class="hidden-xs hidden-sm"
+                        ng-class="{'monthview-current': dt.current&&!dt.selected&&!dt.hasEvent,
+                        'monthview-secondary-with-event': dt.secondary&&dt.hasEvent, 
+                        'monthview-primary-with-event':!dt.secondary&&dt.hasEvent&&!dt.selected, 
+                        'monthview-selected': dt.selected}"  ng-mouseover="hoverIn()" ng-mouseleave="hoverOut()">
+                        <div style="margin-bottom: 0">{{event.title}}</div>
+                        <div style="margin-bottom: 0">{{event.startTime | date:'HH:mm': 'UTC+0700' }} - {{event.endTime | date:'HH:mm': 'UTC+0700' }}</div>
+                        <div ng-show="hoverPopup" style="margin-bottom:1rem; position:absolute; padding:5px; max-width:120px; background-color: {{event.warnaRuang}};>
+                            <hr style="margin:0" />
+                            {{event.borrower}}
+                            <hr style="margin:0" />
+                            {{event.description}}
+                        </div>
                     </div>
                 </div>
             </td>
@@ -59,20 +69,20 @@
                             </div>
                             <div class="col-md-8">
                                 <p style="margin-bottom: 0" ng-show="{{event.roomOrBorrower}}">
-                                    <b>Peminjam, </b>{{event.borrower}}
+                                    <b>Peminjam: </b>{{event.borrower}}
                                 </p>
 								
 								<p style="margin-bottom: 0" ng-show="{{event.roomOrBorrower == false}}">
-                                    <b>Ruangan, </b>{{event.borrower}}
+                                    <b>Ruangan: </b>{{event.borrower}}
                                 </p>
 								
                                 <p ng-if="!event.allDay" style="margin-bottom: 0">
-                                    <b>Waktu, </b>{{event.startTime|date: 'HH:mm': 'UTC+0700' }} - {{event.endTime|date: 'HH:mm': 'UTC+0700' }}
+                                    <b>Waktu: </b>{{event.startTime|date: 'HH:mm': 'UTC+0700' }} - {{event.endTime|date: 'HH:mm': 'UTC+0700' }}
                                 </p>
                                 <p ng-if="event.allDay" style="margin-bottom: 0">
-                                    <b>Waktu, </b>Satu hari penuh</p>
+                                    <b>Waktu: </b>Satu hari penuh</p>
                                 <p style="margin-bottom: 0">
-                                    <b>Deskripsi, </b>{{event.description}}
+                                    <b>Deskripsi: </b>{{event.description}}
                                 </p>
                             </div>
                         </div>
