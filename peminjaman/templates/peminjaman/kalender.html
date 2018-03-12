@@ -277,25 +277,37 @@
     </ul>
     <div class="panel container-fluid">
         <div id="AppKalender" ng-controller="CalendarDemoCtrl" ng-init="filterEvents('filter')">
-            <div class="row">
-                <div class="col-md-3 col-xs-12" style="margin: 15px 0;">
+            <div class="row" style="padding:8px">
+                <div class="col-md-3 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="padding-right: 10px">Ruangan </span>
+                        <span class="input-group-addon" style="width: 100px; text-align: left">Ruangan </span>
                         <select ng-model="filterRuangan" class="form-control input-sm" id="filterQuery">
                             <option value="Semua" selected>Semua</option>
                             <option value="{[{ ruanganData.nama }]}" ng-repeat = "ruanganData in ruanganList">{[{ ruanganData.nama }]}</option>
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3 col-xs-12" style="margin-bottom: 20px">
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-3 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon">Peminjam </span>
+                        <span class="input-group-addon" style="width: 100px; text-align: left">Peminjam </span>
                         <select ng-model="filterPeminjam" class="form-control input-sm" id="filterQueryPeminjam">
                             <option value="Semua" selected>Semua</option>
                             <option value="{[{ peminjamData.nama }]}" ng-repeat = "peminjamData in peminjamList">{[{ peminjamData.nama }]}</option>
                         </select>
+                    </div>
+                </div>
+            <!-- </div>
+            <div class="row"> -->
+                <div class="col-md-3 col-xs-12">
+                    <div class="input-group">
+                        <span class="input-group-addon" style="width: 100px; text-align: left">Tanggal </span>
+<!--                         <select ng-model="filterPeminjam" class="form-control input-sm" id="filterQueryPeminjam">
+                            <option value="Semua" selected>Semua</option>
+                            <option value="{[{ peminjamData.nama }]}" ng-repeat = "peminjamData in peminjamList">{[{ peminjamData.nama }]}</option>
+                        </select> -->
+                        <input type="Date" />
                     </div>
                 </div>
             </div>
