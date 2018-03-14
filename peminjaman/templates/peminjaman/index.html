@@ -40,6 +40,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.6/angular-filter.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.2/jspdf.plugin.autotable.js"></script>
 <script>
 
 var peminjamanList = angular.module('peminjamanList', ['angular.filter', 'ui.bootstrap']);
@@ -222,30 +223,18 @@ peminjamanList.controller("peminjamanListController", function($scope, $http, $f
 		}
 	};
 
-// 	$scope.doTask = function (len, doc) {
-//         html2canvas(document.getElementById('tabel_peminjaman'), {
-//             background: '#ffffff',
-//             onrendered: function (canvas) {
-//                 console.log("Get in  :: " + $scope.currentPage);
-// //                console.log("Get in  :: " + x);
-//                 var img = canvas.toDataURL('image/jpeg');
-//                 doc.addImage(img, 'JPEG', 10, 10);
-// //                $scope.currentPage = x;
-//                 if ($scope.currentPage == len) {
-//                     console.log("Get in");
-//                     doc.save('Test.pdf');
-//                 } else {
-//                     doc.addPage();
-//                     $scope.currentPage += 1;
-//                 }
-//             }
-//         });
-//     };
-
 	$scope.downloadPDF = function () {
-        var doc = new jsPDF('l', 'mm', "a4");
-
-        var data = [["No Laporan", "Peminjam", "Ruangan", "Waktu Awal", "Waktu Akhir", "Tagihan", "Status Pembayaran", "Deskripsi"]];
+        var columns = [
+            {title: "No Laporan", dataKey: "nolaporan"},
+            {title: "Peminjam", dataKey: "peminjam"}, 
+            {title: "Ruangan", dataKey: "ruangan"}, 
+            {title: "Waktu Awal", dataKey: "waktuawal"}, 
+            {title: "Waktu Akhir", dataKey: "waktuakhir"}, 
+            {title: "Tagihan", dataKey: "tagihan"}, 
+            {title: "Status Pembayaran", dataKey: "statuspembayaran"}, 
+            {title: "Deskripsi", dataKey: "deskripsi"}
+        ];
+        var rows = [];
 
         var peminjaman = $scope.peminjamanListData;
         peminjaman = $filter('filter')(peminjaman, {peminjam: $scope.filterPeminjam});
@@ -256,27 +245,42 @@ peminjamanList.controller("peminjamanListController", function($scope, $http, $f
         peminjaman = $filter('orderBy')(peminjaman, $scope.column, $scope.reverse);
 
         angular.forEach(peminjaman, function(value, key){
-            data.push([
-                value.no_laporan.replace(/;/g, ','),
-                value.peminjam.replace(/;/g, ','),
-                value.ruangan.replace(/;/g, ','),
-                $filter('date')(value.waktu_awal, "dd MMM yyyy, HH:mm", "UTC+0700"),
-                $filter('date')(value.waktu_akhir, "dd MMM yyyy, HH:mm", "UTC+0700"),
-                value.jumlah_tagihan,
-                "Lunas pada " + $filter('date')(value.waktu_bayar, "dd MMM yyyy"),
-                value.deskripsi.replace(/;/g, ',').replace(/(?:\r\n|\r|\n)/g, ' | ')]);
-            doc.text(10,10,"|");
-            doc.text(10,10,value.no_laporan+'|');
-            doc.text(10,10,value.peminjam+'|');
-            doc.text(10,10,value.ruangan+'|');
-            doc.text(10,10,value.waktu_awal+'|');
-            doc.text(10,10,value.waktu_akhir+'|');
-            doc.text(10,10,value.jumlah_tagihan+'|');
-            doc.text(10,10,value.waktu_bayar+'|');
-            doc.text(10,10,value.deskripsi+'|\n');
+            var status_pembayaran;
+            if (value.waktu_bayar == "Belum Lunas") {
+                status_pembayaran = value.waktu_bayar;
+            }
+            else {
+                status_pembayaran = "Lunas pada " + $filter('date')(value.waktu_bayar, "dd MMM yyyy");
+            }
+            rows.push({
+                "nolaporan" : value.no_laporan.replace(/;/g, ','), 
+                "peminjam" : value.peminjam.replace(/;/g, ','), 
+                "ruangan" : value.ruangan.replace(/;/g, ','), 
+                "waktuawal" : $filter('date')(value.waktu_awal, "dd MMM yyyy, HH:mm", "UTC+0700"), 
+                "waktuakhir" : $filter('date')(value.waktu_akhir, "dd MMM yyyy, HH:mm", "UTC+0700"), 
+                "tagihan" : value.jumlah_tagihan, 
+                "statuspembayaran" : status_pembayaran, 
+                "deskripsi" : value.deskripsi.replace(/;/g, ',').replace(/(?:\r\n|\r|\n)/g, ' | ')
+            });
         });
 
-        doc.save("Test.pdf");
+        var doc = new jsPDF('l');
+
+        doc.setFontSize(18);
+        doc.text('Laporan Peminjaman Ruangan', 14, 22);
+        doc.setFontSize(11);
+        doc.setTextColor(100);
+        var d = new Date();
+        doc.text(''+d, 14, 30);
+
+        doc.autoTable(columns, rows, {
+            startY: 38,
+            margin: {horizontal: 7},
+            bodyStyles: {valign: 'top'},
+            styles: {overflow: 'linebreak', columnWidth: 'wrap'},
+            columnStyles: {text: {columnWidth: 'auto'}}
+        });
+        doc.save('laporan_'+d.getDate()+'_'+(d.getMonth()+1)+'_'+d.getFullYear()+'.pdf');
     };
 
 	$scope.downloadCSV = function() {
