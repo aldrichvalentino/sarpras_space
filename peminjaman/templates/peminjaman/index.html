@@ -266,15 +266,52 @@ peminjamanList.controller("peminjamanListController", function($scope, $http, $f
 
         var doc = new jsPDF('l');
 
+        var judul_bulan;
+        if ($scope.filter_month.name == 'Semua') {
+            judul_bulan = '';
+        }
+        else {
+            judul_bulan = $scope.filter_month.name+' ';
+        }
+        var judul_peminjam;
+        if (!$scope.filterPeminjam) {
+            judul_peminjam = 'Semua';
+        }
+        else {
+            judul_peminjam = $scope.filterPeminjam+' ';
+        }
+        var judul_tipe;
+        if (!$scope.filterTipe) {
+            judul_tipe = 'Semua';
+        }
+        else {
+            judul_tipe = $scope.filterTipe+' ';
+        }
+        var judul_ruangan;
+        if (!$scope.filterRuangan) {
+            judul_ruangan = 'Semua';
+        }
+        else {
+            judul_ruangan = $scope.filterRuangan+' ';
+        }
+        var judul_bayar;
+        if (!$scope.filterBayar) {
+            judul_bayar = 'Semua';
+        }
+        else {
+            judul_bayar = $scope.filterBayar+' ';
+        }
+
         doc.setFontSize(18);
-        doc.text('Laporan Peminjaman Ruangan', 14, 22);
+        doc.text('Laporan Peminjaman Ruangan '+judul_bulan+$scope.filter_year, 14, 22);
         doc.setFontSize(11);
         doc.setTextColor(100);
         var d = new Date();
         doc.text(''+d, 14, 30);
+        doc.text('Peminjam : '+judul_peminjam+'                Tipe Ruangan : '+judul_tipe+'                Ruangan : '+judul_ruangan+'                Status Bayar : '+judul_bayar, 14, 38);
 
         doc.autoTable(columns, rows, {
-            startY: 38,
+            startY: 46,
             margin: {horizontal: 7},
             bodyStyles: {valign: 'top'},
             styles: {overflow: 'linebreak', columnWidth: 'wrap'},
