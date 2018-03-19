@@ -1,13 +1,10 @@
 {% extends "base.html" %}
 
-
 {% block head %}
 <title>Daftar peminjaman</title>
 {% endblock %}
 
-
 {% block body %}
-
 <style>
     .table>tbody>tr>td {
         padding: 8px 0;
@@ -45,8 +42,8 @@
             <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left">Tahun </span>
-                        <select ng-model="filter_year" ng-options="x for x in poss_year" class="form-control input-sm" ng-change="filterEvents('filter')">
+                        <span class="input-group-addon" style="text-align: left">Bulan </span>
+                        <select ng-model="filter_month" ng-options="x.name for x in poss_month" class="form-control input-sm" ng-change="filterEvents('filter')">
                         </select>
                     </div>
                 </div>
@@ -54,8 +51,8 @@
             <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left">Bulan </span>
-                        <select ng-model="filter_month" ng-options="x.name for x in poss_month" class="form-control input-sm" ng-change="filterEvents('filter')">
+                        <span class="input-group-addon" style="text-align: left">Tanggal </span>
+                        <select ng-model="filter_day" ng-options="x.name for x in poss_day" class="form-control input-sm" ng-change="filterEvents('filter')">
                         </select>
                     </div>
                 </div>
@@ -84,7 +81,7 @@
                 <calendar ng-model="currentDate" calendar-mode="mode" event-source="eventSource"
                       range-changed="reloadSource(startTime, endTime)"
                       event-selected="onEventSelected(event)"
-                      time-selected="onTimeSelected(selectedTime)"></calendar>
+                      time-selected=""></calendar>
             </div>
             <!-- <div ng-show="filterEvents('refresh')">
 
@@ -104,12 +101,8 @@
   		$interpolateProvider.endSymbol('}]}');
 	}).controller('CalendarDemoCtrl',['$scope','$http','$timeout', '$filter', function ($scope, $http, $timeout, $filter) {
         'use strict';
-        $scope.poss_year = [];
-        for(var y=2000; y <= (new Date()).getFullYear() + 5; y++){
-            $scope.poss_year = $scope.poss_year.concat(y);
-        }
-        $scope.filter_year = (new Date()).getFullYear();
 
+        // create months
         $scope.poss_month = [
             {id : "12", name : "Semua"},
             {id : "00", name : "Januari"},
@@ -127,6 +120,16 @@
             ];
         $scope.filter_month = $scope.poss_month[0];
 
+        // create days
+        $scope.poss_day = [
+            {id : "0", name : "Semua"}
+        ];
+        for(var i = 1; i <= 31; i++){
+            $scope.poss_day.push({id: i, name: i});
+        }
+        $scope.filter_day = $scope.poss_day[0];
+
+        // calendar mode
         $scope.changeMode = function (mode) {
             $scope.mode = mode;
         };
@@ -143,9 +146,9 @@
         $scope.onEventSelected = function (event) {
             $scope.event = event;
         };
-        $scope.onTimeSelected = function (selectedTime) {
-            console.log('Selected time: ' + selectedTime);
-        };
+        // $scope.onTimeSelected = function (selectedTime) {
+        //     console.log('Selected time: ' + selectedTime);
+        // };
 		/* Global Variables */
 		$scope.peminjamanList_GLOBAL = null;
 
@@ -197,10 +200,10 @@
 			return;
         };
 		// get all borrowed room in particular year
-	    function fetchPeminjaman(){
+	    function fetchPeminjaman(year){
             var req = {
                 method: 'GET',
-                url :  "{% url 'peminjaman:filter_base' %}" + 2018,
+                url :  "{% url 'peminjaman:filter_base' %}" + year,
             };
             $scope.peminjamanList_GLOBAL = [];
             $http(req).success(function(data, status, headers, config) {
@@ -229,7 +232,7 @@
                         }
                     });
 
-                    $scope.peminjamanList_GLOBAL = $scope.peminjamanList_GLOBAL.concat({
+                    $scope.peminjamanList_GLOBAL.push({
                         title: ruangan_selected,
                         ruangan: ruangan_selected,
                         startTime: start_date,
@@ -243,18 +246,24 @@
                         roomOrBorrower: true
                     });
                 });
-
-                console.log($scope.peminjamanList_GLOBAL);
             }).error(function(data, status, headers, config) {
                 $scope.peminjamanList_GLOBAL = "ERROR";
             });
         };
-        
 
+        // custom filter function
+        $scope.filterMonths = function(item) {
+            return item.startTime.getMonth() == $scope.filter_month.id;
+        }
+
+        $scope.filterDays = function(item) {
+            return item.startTime.getDate() == $scope.filter_day.id;
+        }
+        
 		/* Filtering */
 		$scope.filterRuangan = "Semua";
 		$scope.filterPeminjam = "Semua";
-		fetchPeminjaman();
+		fetchPeminjaman((new Date()).getFullYear());
 		$scope.filterEvents = function(e) {
             var events = $scope.peminjamanList_GLOBAL;
             if($scope.filterPeminjam !== "Semua"){
@@ -263,9 +272,14 @@
             if($scope.filterRuangan !== "Semua"){
                 events = $filter('filter')(events, {ruangan: $scope.filterRuangan});
             }
-            // TODO: filter_month and year
-
-			// for (var indeksPeminjaman in $scope.peminjamanList_GLOBAL) {
+            if($scope.filter_month.id != 12){
+                events = $filter('filter')(events, $scope.filterMonths);
+            }
+            if($scope.filter_day.id != 0){
+                events = $filter('filter')(events, $scope.filterDays);
+            }
+            
+            // for (var indeksPeminjaman in $scope.peminjamanList_GLOBAL) {
             //     ruanganTampil($scope.peminjamanList_GLOBAL[indeksPeminjaman].ruangan_id);
 			// 	peminjamTampil($scope.peminjamanList_GLOBAL[indeksPeminjaman].peminjam_id);
 			// 	//var filterByPeminjam = peminjamTampil($scope.peminjamanList_GLOBAL[indeksPeminjaman].peminjam_id);
