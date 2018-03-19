@@ -227,12 +227,12 @@ peminjamanList.controller("peminjamanListController", function($scope, $http, $f
 	$scope.downloadPDF = function () {
         var columns = [
             {title: "No Laporan", dataKey: "nolaporan"},
-            {title: "Peminjam", dataKey: "peminjam"}, 
-            {title: "Ruangan", dataKey: "ruangan"}, 
-            {title: "Waktu Awal", dataKey: "waktuawal"}, 
-            {title: "Waktu Akhir", dataKey: "waktuakhir"}, 
-            {title: "Tagihan", dataKey: "tagihan"}, 
-            {title: "Status Pembayaran", dataKey: "statuspembayaran"}, 
+            {title: "Peminjam", dataKey: "peminjam"},
+            {title: "Ruangan", dataKey: "ruangan"},
+            {title: "Waktu Awal", dataKey: "waktuawal"},
+            {title: "Waktu Akhir", dataKey: "waktuakhir"},
+            {title: "Tagihan", dataKey: "tagihan"},
+            {title: "Status Pembayaran", dataKey: "statuspembayaran"},
             {title: "Deskripsi", dataKey: "deskripsi"}
         ];
         var rows = [];
@@ -254,13 +254,13 @@ peminjamanList.controller("peminjamanListController", function($scope, $http, $f
                 status_pembayaran = "Lunas pada " + $filter('date')(value.waktu_bayar, "dd MMM yyyy");
             }
             rows.push({
-                "nolaporan" : value.no_laporan.replace(/;/g, ','), 
-                "peminjam" : value.peminjam.replace(/;/g, ','), 
-                "ruangan" : value.ruangan.replace(/;/g, ','), 
-                "waktuawal" : $filter('date')(value.waktu_awal, "dd MMM yyyy, HH:mm", "UTC+0700"), 
-                "waktuakhir" : $filter('date')(value.waktu_akhir, "dd MMM yyyy, HH:mm", "UTC+0700"), 
-                "tagihan" : value.jumlah_tagihan, 
-                "statuspembayaran" : status_pembayaran, 
+                "nolaporan" : value.no_laporan.replace(/;/g, ','),
+                "peminjam" : value.peminjam.replace(/;/g, ','),
+                "ruangan" : value.ruangan.replace(/;/g, ','),
+                "waktuawal" : $filter('date')(value.waktu_awal, "dd MMM yyyy, HH:mm", "UTC+0700"),
+                "waktuakhir" : $filter('date')(value.waktu_akhir, "dd MMM yyyy, HH:mm", "UTC+0700"),
+                "tagihan" : value.jumlah_tagihan,
+                "statuspembayaran" : status_pembayaran,
                 "deskripsi" : value.deskripsi.replace(/;/g, ',').replace(/(?:\r\n|\r|\n)/g, ' | ')
             });
         });
@@ -512,7 +512,7 @@ $(document).ready(function () {
 	                    <td>{[{ peminjamanData.jumlah_tagihan }]}</td>
 	                    <td ng-click="togglePembayaran(peminjamanData)" style="cursor: pointer">{[{ peminjamanData.waktu_bayar | date:'dd MMM yyyy' }]}</td>
 	                    <td>{[{ peminjamanData.deskripsi }]}</td>
-											<td ng-click="go(peminjamanData.print_link)"><a href="#">{[{ peminjamanData.no_laporan }]}</a></td>
+											<td ng-click="go(peminjamanData.print_link)"><a href="#">Cetak</a></td>
 
                 	</tr>
                 </table>
