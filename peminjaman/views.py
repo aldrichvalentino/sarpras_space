@@ -398,6 +398,39 @@ def formedit(request, peminjaman_id = 0):
     })
 
 
+@login_required
+def formprint(request, peminjaman_id = 0):
+    try:
+        selected_peminjaman = Peminjaman.objects.get(id=peminjaman_id)
+    except Exception as e:
+        return redirect(reverse('peminjaman:index'))
+
+    input_nomor_surat = request.POST.get('nomor_surat', selected_peminjaman.no_laporan)
+    perihal_surat = request.POST.get('perihal_surat', '')
+    tanggal_surat = request.POST.get('tanggal_surat', datetime.now().strftime("%Y-%m-%d"))
+    tujuan_surat = request.POST.get('tujuan_surat', '')
+    input_ruangan = selected_peminjaman.ruangan.id
+    tanggal_awal = request.POST.get('waktu_awal_0', selected_peminjaman.waktu_awal.date().isoformat())  # format tanggal : %Y-%m-%d
+    tanggal_akhir = request.POST.get('waktu_akhir_0', selected_peminjaman.waktu_akhir.date().isoformat())
+    pukul_awal = request.POST.get('waktu_awal_1', selected_peminjaman.waktu_awal.time().strftime("%H:%M"))  # format waktu : %H:%M
+    pukul_akhir = request.POST.get('waktu_akhir_1', selected_peminjaman.waktu_akhir.time().strftime("%H:%M"))
+
+    all_ruangan = Ruangan.objects.all()
+    return render(request, 'peminjaman/print.html', {
+        'all_ruangan': all_ruangan,
+        'selected_peminjaman' : selected_peminjaman,
+        'nomor_surat': input_nomor_surat,
+        'perihal_surat': perihal_surat,
+        'tanggal_surat' : tanggal_surat,
+        'tujuan_surat': tujuan_surat,
+        'input_ruangan': input_ruangan,
+        'tanggal_awal': tanggal_awal,
+        'tanggal_akhir': tanggal_akhir,
+        'pukul_awal': pukul_awal,
+        'pukul_akhir': pukul_akhir,
+    })
+
+
 
 # Return a form which'll be used to delete peminjaman object to model
 @login_required
