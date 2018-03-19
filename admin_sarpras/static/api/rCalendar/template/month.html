@@ -32,7 +32,7 @@
                         'monthview-selected': dt.selected}"  ng-mouseover="hoverIn()" ng-mouseleave="hoverOut()">
                         <div style="margin-bottom: 0">{{event.title}}</div>
                         <div style="margin-bottom: 0">{{event.startTime | date:'HH:mm': 'UTC+0700' }} - {{event.endTime | date:'HH:mm': 'UTC+0700' }}</div>
-                        <div ng-show="hoverPopup" style="margin-bottom:1rem; position:absolute; padding:5px; max-width:120px; background-color: {{event.warnaRuang}};>
+                        <div ng-show="hoverPopup" style="margin-bottom:1rem; position:absolute; padding:5px; max-width:120px; background-color: {{event.warnaRuang}};">
                             <hr style="margin:0" />
                             {{event.borrower}}
                             <hr style="margin:0" />
