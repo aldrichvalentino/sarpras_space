@@ -20,7 +20,7 @@
             <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left">Ruangan </span>
+                        <span class="input-group-addon" style="text-align: left; padding-right: 16px">Ruangan </span>
                         <select ng-model="filterRuangan" class="form-control input-sm" id="filterQuery" ng-change="filterEvents('filter')">
                             <option value="Semua" selected>Semua</option>
                             <option value="{[{ ruanganData.nama }]}" ng-repeat = "ruanganData in ruanganList">{[{ ruanganData.nama }]}</option>
@@ -31,7 +31,7 @@
             <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left">Peminjam </span>
+                        <span class="input-group-addon" style="text-align: left; padding-right: 12px">Peminjam </span>
                         <select ng-model="filterPeminjam" class="form-control input-sm" id="filterQueryPeminjam" ng-change="filterEvents('filter')">
                             <option value="Semua" selected>Semua</option>
                             <option value="{[{ peminjamData.nama }]}" ng-repeat = "peminjamData in peminjamList">{[{ peminjamData.nama }]}</option>
@@ -42,7 +42,7 @@
             <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left">Bulan </span>
+                        <span class="input-group-addon" style="text-align: left; padding-right: 33px">Bulan </span>
                         <select ng-model="filter_month" ng-options="x.name for x in poss_month" class="form-control input-sm" ng-change="filterEvents('filter')">
                         </select>
                     </div>
@@ -51,13 +51,23 @@
             <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left">Tanggal </span>
+                        <span class="input-group-addon" style="text-align: left; padding-right: 20px">Tanggal </span>
                         <select ng-model="filter_day" ng-options="x.name for x in poss_day" class="form-control input-sm" ng-change="filterEvents('filter')">
                         </select>
                     </div>
                 </div>
             </div>
-            <div class="well well-sm" style="margin-top:8px" ng-show="filterEvents('filterd')">
+            <div class="row" style="padding:8px">
+                <div class="col-xs-12">
+                    <div class="input-group" style="text-align: left">
+                            <span class="input-group-addon" style="text-align: left">Refresh </span>
+                            <span type="button" class="glyphicon glyphicon-refresh btn btn-link btn-sm" ng-click="filterEvents('filter')" id="calendarRefresh" aria-hidden="true">
+                            </span>
+                        <!-- </span> -->
+                    </div>
+                </div>
+            </div>
+            <div class="well well-sm" style="margin-top:8px">
                 <calendar ng-model="currentDate" calendar-mode="mode" event-source="eventSource"
                       range-changed="reloadSource(startTime, endTime)"
                       event-selected="onEventSelected(event)"
