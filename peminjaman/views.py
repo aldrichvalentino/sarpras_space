@@ -33,7 +33,7 @@ def index(request, errormsg=''):
 
 @login_required
 def kalender(request, errormsg=''):
-    return render(request, 'peminjaman/kalender_admin.html', {})
+    return render(request, 'peminjaman/kalender.html', {})
 
 def kalender_umum(request, errormsg=''):
     return render(request, 'peminjaman/kalender_umum.html', {})
