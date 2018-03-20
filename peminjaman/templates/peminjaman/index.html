@@ -223,6 +223,10 @@ peminjamanList.controller("peminjamanListController", function($scope, $http, $f
 		}
 	};
 
+    function getData(rows) {
+
+    }
+
 	$scope.downloadPDF = function () {
         var columns = [
             {title: "No Laporan", dataKey: "nolaporan"},
@@ -314,8 +318,7 @@ peminjamanList.controller("peminjamanListController", function($scope, $http, $f
             startY: 46,
             margin: {horizontal: 7},
             bodyStyles: {valign: 'top'},
-            styles: {overflow: 'linebreak', columnWidth: 'wrap'},
-            columnStyles: {text: {columnWidth: 'auto'}}
+            styles: {overflow: 'linebreak', columnWidth: 35}
         });
         doc.save('laporan_'+d.getDate()+'_'+(d.getMonth()+1)+'_'+d.getFullYear()+'.pdf');
     };
