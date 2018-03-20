@@ -20,8 +20,7 @@ urlpatterns = [
     url(r'^edit/(?P<peminjaman_id>[0-9]+)/$', views.formedit, name='edit'),
 
     # /peminjaman/edit/4
-    url(r'^print/$', views.formprint, name='printbase'),
-    url(r'^print/(?P<peminjaman_id>[0-9]+)/$', views.formprint, name='print'),
+    url(r'^print/$',views.formprint, name='print'),
 
     # /peminjaman/delete/4
     url(r'^delete/$', views.formdelete, name='deletebase'),
