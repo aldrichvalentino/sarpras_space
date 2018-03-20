@@ -399,35 +399,60 @@ def formedit(request, peminjaman_id = 0):
 
 
 @login_required
-def formprint(request, peminjaman_id = 0):
-    try:
-        selected_peminjaman = Peminjaman.objects.get(id=peminjaman_id)
-    except Exception as e:
-        return redirect(reverse('peminjaman:index'))
+def formprint(request):
 
-    input_nomor_surat = request.POST.get('nomor_surat', selected_peminjaman.no_laporan)
-    perihal_surat = request.POST.get('perihal_surat', '')
+    nomor_surat = request.POST.get('nomor_surat', '')
+    tahun_surat = request.POST.get('tahun_surat', '')
     tanggal_surat = request.POST.get('tanggal_surat', datetime.now().strftime("%Y-%m-%d"))
     tujuan_surat = request.POST.get('tujuan_surat', '')
-    input_ruangan = selected_peminjaman.ruangan.id
-    tanggal_awal = request.POST.get('waktu_awal_0', selected_peminjaman.waktu_awal.date().isoformat())  # format tanggal : %Y-%m-%d
-    tanggal_akhir = request.POST.get('waktu_akhir_0', selected_peminjaman.waktu_akhir.date().isoformat())
-    pukul_awal = request.POST.get('waktu_awal_1', selected_peminjaman.waktu_awal.time().strftime("%H:%M"))  # format waktu : %H:%M
-    pukul_akhir = request.POST.get('waktu_akhir_1', selected_peminjaman.waktu_akhir.time().strftime("%H:%M"))
+    nomor_tl = request.POST.get('nomor_tl', '')
+    tanggal_tl = request.POST.get('tanggal_tl', '')
+    terima_tl = request.POST.get('terima_tl', '')
+    tempat = request.POST.get('tempat', '')
+    fasilitas = request.POST.get('fasilitas', '')
+    kegiatan = request.POST.get('kegiatan', '')
+    tanggal_tempat_awal = request.POST.get('tanggal_tempat_awal', datetime.now().strftime("%Y-%m-%d"))
+    tanggal_tempat_akhir = request.POST.get('tanggal_tempat_akhir', datetime.now().strftime("%Y-%m-%d"))
+    waktu_tempat_awal = request.POST.get('waktu_tempat_awal', '00:00')
+    waktu_tempat_akhir = request.POST.get('waktu_tempat_akhir', '00:00')
+    tanggal_fasilitas_awal = request.POST.get('tanggal_fasilitas_awal', datetime.now().strftime("%Y-%m-%d"))
+    tanggal_fasilitas_akhir = request.POST.get('tanggal_fasilitas_akhir', datetime.now().strftime("%Y-%m-%d"))
+    waktu_fasilitas_awal = request.POST.get('waktu_fasilitas_awal', '00:00')
+    waktu_fasilitas_akhir = request.POST.get('waktu_fasilitas_akhir', '00:00')
+    keterangan_tempat = request.POST.get('keterangan_tempat', '')
+    keterangan_fasilitas = request.POST.get('keterangan_fasilitas', '')
+    biaya_tempat = request.POST.get('biaya_tempat', '')
+    biaya_fasilitas = request.POST.get('biaya_fasilitas', '')
+    warning_selasar = request.POST.get('warning_selasar', '')
+    konfirmasi_status = request.POST.get('konfirmasi_status', '')
+    diskon = request.POST.get('diskon', 0)
 
-    all_ruangan = Ruangan.objects.all()
     return render(request, 'peminjaman/print.html', {
-        'all_ruangan': all_ruangan,
-        'selected_peminjaman' : selected_peminjaman,
-        'nomor_surat': input_nomor_surat,
-        'perihal_surat': perihal_surat,
+        'nomor_surat' : nomor_surat,
+        'tahun_surat' : tahun_surat,
         'tanggal_surat' : tanggal_surat,
-        'tujuan_surat': tujuan_surat,
-        'input_ruangan': input_ruangan,
-        'tanggal_awal': tanggal_awal,
-        'tanggal_akhir': tanggal_akhir,
-        'pukul_awal': pukul_awal,
-        'pukul_akhir': pukul_akhir,
+        'tujuan_surat' : tujuan_surat,
+        'nomor_tl' : nomor_tl,
+        'tanggal_tl' : tanggal_tl,
+        'terima_tl' : terima_tl,
+        'tempat' : tempat,
+        'fasilitas' : fasilitas,
+        'kegiatan' : kegiatan,
+        'tanggal_tempat_awal' : tanggal_tempat_awal,
+        'tanggal_tempat_akhir' : tanggal_tempat_akhir,
+        'waktu_tempat_awal' : waktu_tempat_awal,
+        'waktu_tempat_akhir' : waktu_tempat_akhir,
+        'tanggal_fasilitas_awal' : tanggal_fasilitas_awal,
+        'tanggal_fasilitas_akhir' : tanggal_fasilitas_akhir,
+        'waktu_fasilitas_awal' : waktu_fasilitas_awal,
+        'waktu_fasilitas_akhir' : waktu_fasilitas_akhir,
+        'keterangan_tempat' : keterangan_tempat,
+        'keterangan_fasilitas' : keterangan_fasilitas,
+        'biaya_tempat' : biaya_tempat,
+        'biaya_fasilitas' : biaya_fasilitas,
+        'warning_selasar' : warning_selasar,
+        'konfirmasi_status' : konfirmasi_status,
+        'diskon' : diskon,
     })
 
 
