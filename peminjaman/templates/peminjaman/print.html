@@ -8,30 +8,6 @@
 
 {% block body %}
 
-<script>
-    var peminjamList = angular.module('peminjamList', []);
-    peminjamList.config(function($interpolateProvider) {
-    $interpolateProvider.startSymbol('{[{');
-    $interpolateProvider.endSymbol('}]}');
-  });
-  peminjamList.controller("peminjamListController", function($scope) {
-
-    $scope.ruanganID = {% if input_ruangan %} "{{input_ruangan}}" {% else %} "" {% endif %}
-
-    $scope.ruanganListData = [];
-    {% for ruangan in all_ruangan %}
-    $scope.ruanganListData = $scope.ruanganListData.concat({
-        id: "{{ ruangan.id }}",
-        nama:"{{ ruangan.nama }}",
-        harga:"{{ ruangan.harga }}",
-        deskripsi:"{{ ruangan.deskripsi }}",
-        tipe:"{{ ruangan.tipe }}",
-        edit_link: "{% url 'ruangan:edit' ruangan.id %}",
-        delete_link: "{% url 'ruangan:delete' ruangan.id %}"
-    });
-    {% endfor %}
-  });
-</script>
 <ul class="breadcrumb" style="margin-bottom: 10px;">
     <li><a href="{% url 'peminjaman:index' %}">Peminjaman</a></li>
     <li class="active">Cetak Surat</li>
@@ -39,26 +15,30 @@
 <div class="container-fluid">
 <div class="row">
     <div class="col-lg-6 panel" style="padding-top: 20px;">
-        <form enctype="multipart/form-data" action="{% url 'peminjaman:print' %}" method="post" id="peminjaman_form" novalidate ng-app="peminjamList" ng-controller="peminjamListController" class="form-horizontal">
+        <form action="{% url 'peminjaman:printfile' %}" method="post" id="peminjaman_form" class="form-horizontal">
             {% csrf_token %}
             <fieldset>
                 <legend>Formulir Surat Peminjaman</legend>
-                <p style="color: red;text-align: right">* wajib diisi</p>
                 <div class="form-group">
-                    <label for="id_nomor_surat" class="col-lg-3 control-label">Nomor Surat</label>
-                    <div class="col-lg-9">
-                        <div class="input-group">
-                            <input type="text" name="nomor_surat" id="id_nomor_surat" class="form-control" value="{{ nomor_surat }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
-                        </div>
+                    <label for="id_nama_file" class="col-lg-3 control-label">Nama File</label>
+                    <div class="col-lg-4">
+                      <div class="input-group">
+                        <input type="text" name="nama_file" id="id_nama_file" class="form-control" value="surat" required/>
+                      </div>
                     </div>
+                    <label class="col-lg-1 control-label">.docx</label>
                 </div>
                 <div class="form-group">
-                  <label for="tahun_surat" class="col-lg-3 control-label">Tahun Surat</label>
-                  <div class="col-lg-9">
+                    <label for="id_nomor_surat" class="col-lg-3 control-label">Nomor Surat</label>
+                    <div class="col-lg-3">
+                        <div class="input-group">
+                            <input type="number" step="1" min="0" name="nomor_surat" id="id_nomor_surat" class="form-control" value="0" required/>
+                        </div>
+                    </div>
+                    <label for="id_tahun_surat" class="col-lg-2 control-label">/I1.B03.1/SP/</label>
+                  <div class="col-lg-3">
                     <div class="input-group">
-                      <input type="text" name="tahun_surat" id="id_perihal_surat" class="form-control" value="{{tahun_surat}}"/>
-                      <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                      <input type="number" step="1" min="0" name="tahun_surat" id="id_tahun_surat" class="form-control" required/>
                     </div>
                   </div>
                 </div>
@@ -67,16 +47,15 @@
                       <div class="col-md-7">
                           <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="tanggal_surat" id="id_tanggal_surat" class="form-control" value="{{ tanggal_surat }}" required />
+                                <input type="date" name="tanggal_surat" id="id_tanggal_surat" class="form-control" required/>
                           </div>
                       </div>
                   </div>
                   <div class="form-group">
-                    <label for="id_tujuan" class="col-lg-3 control-label">Penerima Surat</label>
+                    <label for="id_tujuan_surat" class="col-lg-3 control-label">Tujuan Surat</label>
                     <div class="col-lg-9">
                       <div class="input-group">
-                        <input type="text" name="tujuan_surat" id="id_tujuan_surat" class="form-control" value="{{tujuan_surat}}"/>
-                        <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                        <input type="text" name="tujuan_surat" id="id_tujuan_surat" class="form-control" required/>
                       </div>
                     </div>
                 </div>
@@ -84,35 +63,33 @@
                     <label for="id_nomor_tl" class="col-lg-3 control-label">Nomor Surat Pengajuan</label>
                     <div class="col-lg-9">
                         <div class="input-group">
-                            <input type="text" name="nomor_tl" id="id_nomor_tl" class="form-control" value="{{ nomor_tl }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                            <input type="text" name="nomor_tl" id="id_nomor_tl" class="form-control" value="" required/>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="id_tanggal_tl" class="col-lg-3 control-label">Tanggal Pengajuan</label>
-                    <div class="col-lg-9">
-                        <div class="input-group">
-                            <input type="text" name="tanggal_tl" id="id_tanggal_tl" class="form-control" value="{{ tanggal_tl }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
-                        </div>
-                    </div>
-                </div>
+                      <label class="col-lg-3 control-label">Tanggal Pengajuan</label>
+                      <div class="col-md-7">
+                          <div class="input-group">
+                                <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
+                                <input type="date" name="tanggal_tl" id="id_tanggal_tl" class="form-control" required/>
+                          </div>
+                      </div>
+                  </div>
                 <div class="form-group">
-                    <label for="id_terima_tl" class="col-lg-3 control-label">Tanggal Tindak Lanjut</label>
-                    <div class="col-lg-9">
-                        <div class="input-group">
-                            <input type="text" name="terima_tl" id="id_terima_tl" class="form-control" value="{{ terima_tl }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
-                        </div>
-                    </div>
-                </div>
+                      <label class="col-lg-3 control-label">Tanggal Tindak Lanjut</label>
+                      <div class="col-md-7">
+                          <div class="input-group">
+                                <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
+                                <input type="date" name="terima_tl" id="id_terima_tl" class="form-control" required/>
+                          </div>
+                      </div>
+                  </div>
                 <div class="form-group">
                     <label for="id_tempat" class="col-lg-3 control-label">Tempat</label>
                     <div class="col-lg-9">
                         <div class="input-group">
-                            <input type="text" name="tempat" id="id_tempat" class="form-control" value="{{ tempat }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                            <input type="text" name="tempat" id="id_tempat" class="form-control" value=""/>
                         </div>
                     </div>
                 </div>
@@ -120,8 +97,7 @@
                     <label for="id_fasilitas" class="col-lg-3 control-label">Fasilitas</label>
                     <div class="col-lg-9">
                         <div class="input-group">
-                            <input type="text" name="fasilitas" id="id_fasilitas" class="form-control" value="{{ fasilitas }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                            <input type="text" name="fasilitas" id="id_fasilitas" class="form-control" value=""/>
                         </div>
                     </div>
                 </div>
@@ -129,8 +105,7 @@
                     <label for="id_kegiatan" class="col-lg-3 control-label">Kegiatan</label>
                     <div class="col-lg-9">
                         <div class="input-group">
-                            <input type="text" name="kegiatan" id="id_kegiatan" class="form-control" value="{{ kegiatan }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                            <input type="text" name="kegiatan" id="id_kegiatan" class="form-control" value="" required/>
                         </div>
                     </div>
                 </div>
@@ -140,13 +115,12 @@
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="tanggal_tempat_awal" id="id_tanggal_tempat_awal" class="form-control" value="{{ tanggal_fasilitas_awal }}" required />
+                                <input type="date" name="tanggal_tempat_awal" id="id_tanggal_tempat_awal" class="form-control" required/>
                             </div>
                             <div class="input-group">
-                                <span class="input-group-addon" style="padding-right: 30px">Jam</span>
-                                <input type="time" name="waktu_tempat_awal" id="id_waktu_tempat_awal" class="form-control" value="{{ waktu_tempat_awal }}" required />
+                                <span class="input-group-addon" style="padding-right: 30px">Waktu</span>
+                                <input type="time" name="waktu_tempat_awal" id="id_waktu_tempat_awal" class="form-control" value="00:00" required/>
                             </div>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
                         </div>
                     </div>
                 </div>
@@ -157,13 +131,12 @@
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="tanggal_tempat_akhir" id="id_tanggal_tempat_akhir" class="form-control" value="{{ tanggal_tempat_akhir }}" required />
+                                <input type="date" name="tanggal_tempat_akhir" id="id_tanggal_tempat_akhir" class="form-control" required/>
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 25px">Waktu</span>
-                                <input type="time" name="waktu_tempat_akhir" id="id_waktu_tempat_akhir" class="form-control" value="{{ waktu_tempat_akhir }}" required />
+                                <input type="time" name="waktu_tempat_akhir" id="id_waktu_tempat_akhir" class="form-control" value="00:00" required/>
                             </div>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
                         </div>
                     </div>
                 </div>
@@ -173,13 +146,12 @@
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="tanggal_fasilitas_awal" id="id_tanggal_fasilitas_awal" class="form-control" value="{{ tanggal_fasilitas_awal }}" required />
+                                <input type="date" name="tanggal_fasilitas_awal" id="id_tanggal_fasilitas_awal" class="form-control" required/>
                             </div>
                             <div class="input-group">
-                                <span class="input-group-addon" style="padding-right: 30px">Jam</span>
-                                <input type="time" name="waktu_fasilitas_awal" id="id_waktu_fasilitas_awal" class="form-control" value="{{ waktu_fasilitas_awal }}" required />
+                                <span class="input-group-addon" style="padding-right: 30px">Waktu</span>
+                                <input type="time" name="waktu_fasilitas_awal" id="id_waktu_fasilitas_awal" class="form-control" value="00:00" required/>
                             </div>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
                         </div>
                     </div>
                 </div>
@@ -190,13 +162,12 @@
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="tanggal_fasilitas_akhir" id="id_tanggal_fasilitas_akhir" class="form-control" value="{{ tanggal_fasilitas_akhir }}" required />
+                                <input type="date" name="tanggal_fasilitas_akhir" id="id_tanggal_fasilitas_akhir" class="form-control" required/>
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 25px">Waktu</span>
-                                <input type="time" name="waktu_fasilitas_akhir" id="id_waktu_fasilitas_akhir" class="form-control" value="{{ waktu_fasilitas_akhir }}" required />
+                                <input type="time" name="waktu_fasilitas_akhir" id="id_waktu_fasilitas_akhir" class="form-control" value="00:00" required/>
                             </div>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
                         </div>
                     </div>
                 </div>
@@ -204,8 +175,7 @@
                     <label for="id_keterangan_tempat" class="col-lg-3 control-label">Keterangan Tempat</label>
                     <div class="col-lg-9">
                         <div class="input-group">
-                            <input type="text" name="keterangan_tempat" id="id_keterangan_tempat" class="form-control" value="{{keterangan_tempat }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                            <input type="text" name="keterangan_tempat" id="id_keterangan_tempat" class="form-control" value="-" required/>
                         </div>
                     </div>
                 </div>
@@ -213,51 +183,65 @@
                     <label for="id_keterangan_fasilitas" class="col-lg-3 control-label">Keterangan Fasilitas</label>
                     <div class="col-lg-9">
                         <div class="input-group">
-                            <input type="text" name="keterangan_fasilitas" id="id_keterangan_fasilitas" class="form-control" value="{{keterangan_fasilitas }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                            <input type="text" name="keterangan_fasilitas" id="id_keterangan_fasilitas" class="form-control" value="-" required/>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="id_biaya_tempat" class="col-lg-3 control-label">Biaya Tempat</label>
-                    <div class="col-lg-9">
+                    <label class="col-lg-1 control-label">Rp. </label>
+                    <div class="col-lg-4">
                         <div class="input-group">
-                            <input type="text" name="biaya_tempat" id="id_biaya_tempat" class="form-control" value="{{biaya_tempat }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                            <input type="number" step="1" min="0" name="biaya_tempat" id="id_biaya_tempat" class="form-control" value="0" required/>
                         </div>
                     </div>
+                    <label class="col-lg-2 control-label">,- per hari</label>
                 </div>
                 <div class="form-group">
                     <label for="id_biaya_fasilitas" class="col-lg-3 control-label">Biaya Fasilitas</label>
-                    <div class="col-lg-9">
-                        <div class="input-group">
-                            <input type="text" name="biaya_fasilitas" id="id_biaya_fasilitas" class="form-control" value="{{biaya_fasilitas }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
-                        </div>
+                    <label class="col-lg-1 control-label">Rp. </label>
+                    <div class="col-lg-4">
+                        <span class="input-group">
+                            <input type="number" step="1" min="0" name="biaya_fasilitas" id="id_biaya_fasilitas" class="form-control" value="0" required>
+                        </span>
                     </div>
+                    <label class="col-lg-2 control-label">,- per hari</label>
                 </div>
                 <div class="form-group">
-                    <label for="id_warning_selasar" class="col-lg-3 control-label">Penggunaan Selasar ?</label>
-                        <div class="input-group" style="padding: 10px 0 0 25px">
-                            <input type="checkbox" name="warning_selasar" id="id_warning_selasar" value="already" onclick="changed()"/>
-                            <span class="">Ya</span>
+                    <label for="id_warning_selasar" class="col-lg-3 control-label">Menggunakan pesan selasar</label>
+                        <div class="checkbox col-lg-9">
+                            <label><input type="checkbox" name="warning_selasar" value="on" id="id_warning_selasar" checked/> Ya</label>
                         </div>
                     </div>
                 <div class="form-group">
-                    <label for="id_konfirmasi_status" class="col-lg-3 control-label">Konfirmasi Status</label>
-                    <div class="col-lg-9">
-                        <div class="input-group">
-                            <input type="text" name="konfirmasi_status" id="id_konfirmasi_status" class="form-control" value="{{konfirmasi_status }}"/>
-                            <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+                    <label for="id_konfirmasi_status" class="col-lg-3 control-label">Menggunakan pesan konfirmasi status</label>
+                        <div class="checkbox col-lg-9">
+                            <label><input type="checkbox" name="konfirmasi_status" value="on" id="id_konfirmasi_status" checked/> Ya</label>
                         </div>
                     </div>
-                </div>
-                <div ng-class="{'form-group': true, 'has-error' : form.discount.$touched&&form.discount.$invalid}">
+                <div class="form-group">
                     <label for="id_diskon" class="col-lg-3 control-label">Diskon</label>
-                    <div class="col-lg-9">
+                    <div class="col-lg-5">
                         <div class="input-group">
-                            <input type="text" name="diskon" id="id_diskon" required class="form-control" value="{{ diskon }}" />
-                            <span ng-class="{'input-group-addon': true, 'has-error' : form.discount.$touched&&form.discount.$invalid}">%</span>
+                            <input type="number" step="1" min="0" max="100" name="diskon" id="id_diskon" required class="form-control" value="0" required/>
+                        </div>
+                    </div>
+                    <label class="col-lg-1 control-label">%</label>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Tembusan</label>
+                    <div class="col-lg-9">
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="tembusan1" value="on" checked/> Wakil Rektor Bidang Sumberdaya dan Organisasi</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="tembusan2" value="on" checked/> Direktur Sarana dan Prasarana (sebagai laporan)</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="tembusan3" value="on" checked/> Kepala UPT K3L</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="tembusan4" value="on" checked/> Petugas Ruangan</label>
                         </div>
                     </div>
                 </div>
@@ -277,15 +261,27 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+<script>
+    String.prototype.lpad = function(padString, length) {
+        var str = this;
+        while (str.length < length)
+            str = padString + str;
+        return str;
+    };
 
-<script type="text/javascript">
-  function changed() {
-     if (!$('#id_warning_selasar').is(':checked')) {
-        $('#id_warning_selasar').attr('value1', 'No');
-  } else {
-      $('#id_warning_selasar').attr('value1', 'Yes');
-  }
-}
-
+    today = new Date();
+    todayYear = today.getFullYear().toString(10).lpad('0', 4);
+    todayMonth = (today.getMonth() + 1).toString(10).lpad('0', 2);
+    todayDate = today.getDate().toString(10).lpad('0', 2);
+    todayString = todayYear + '-' + todayMonth + '-' + todayDate;
+    $('#id_tahun_surat').val(todayYear);
+    $('#id_tanggal_surat').val(todayString);
+    $('#id_tanggal_tl').val(todayString);
+    $('#id_terima_tl').val(todayString);
+    $('#id_tanggal_tempat_awal').val(todayString);
+    $('#id_tanggal_tempat_akhir').val(todayString);
+    $('#id_tanggal_fasilitas_awal').val(todayString);
+    $('#id_tanggal_fasilitas_akhir').val(todayString);
 </script>
+
 {% endblock %}
