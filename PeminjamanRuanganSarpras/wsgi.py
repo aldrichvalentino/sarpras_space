@@ -7,9 +7,10 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/
 """
 
-import os, sys
+import os, sys, static
 
 #import django.core.handlers.wsgi
+wsgi_app = static.Cling('/var/www/sarpras')
 
 sys.path.append('/home/ppl/SarprasI')
 #sys.path.append('/home/ppl/SarprasI/PeminjamanRuanganSarpras')

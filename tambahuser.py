@@ -1,6 +1,6 @@
 hostname = 'localhost'
 username = 'root'
-password = ''
+password = 'ppl2018'
 database = 'DBNAME'
 
 # Simple routine to run a query on a database and print the results:
@@ -17,6 +17,6 @@ if __name__ == '__main__':
 		password = sys.argv[1]
 		myConnection = MySQLdb.connect( host=hostname, user=username, passwd=password )
 	else:
-		myConnection = MySQLdb.connect( host=hostname, user=username )
+		myConnection = MySQLdb.connect( host=hostname, user=username, passwd=password )
 	doQuery( myConnection )
 	myConnection.close()
