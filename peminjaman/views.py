@@ -13,9 +13,13 @@ from log.models import Log
 from datetime import datetime, date
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from docxtpl import DocxTemplate
+from django.conf import settings
+from django.http import HttpResponse
 
 import json
 import re
+import os
 
 # Peminjaman index view, mostly for debugging purpose
 @login_required
@@ -397,6 +401,69 @@ def formedit(request, peminjaman_id = 0):
         'waktu_bayar': input_tanggal_lunas,
     })
 
+@login_required
+def formprint(request):
+    return render(request, 'peminjaman/print.html')
+
+@login_required
+def printfile(request):
+
+    nama_file = request.POST.get('nama_file')
+    nomor_surat = request.POST.get('nomor_surat')
+    tahun_surat = request.POST.get('tahun_surat', datetime.today().year)
+    tanggal_surat = datetime.strptime(request.POST.get('tanggal_surat'), '%Y-%m-%d').date()
+    tujuan_surat = request.POST.get('tujuan_surat')
+    nomor_tl = request.POST.get('nomor_tl')
+    tanggal_tl = datetime.strptime(request.POST.get('tanggal_tl'), '%Y-%m-%d').date()
+    terima_tl = datetime.strptime(request.POST.get('terima_tl'), '%Y-%m-%d').date()
+    tempat = request.POST.get('tempat')
+    fasilitas = request.POST.get('fasilitas')
+    kegiatan = request.POST.get('kegiatan')
+    tanggal_tempat_awal = datetime.strptime(request.POST.get('tanggal_tempat_awal'), '%Y-%m-%d').date()
+    tanggal_tempat_akhir = datetime.strptime(request.POST.get('tanggal_tempat_akhir'), '%Y-%m-%d').date()
+    waktu_tempat_awal = request.POST.get('waktu_tempat_awal')
+    waktu_tempat_akhir = request.POST.get('waktu_tempat_akhir')
+    tanggal_fasilitas_awal = datetime.strptime(request.POST.get('tanggal_fasilitas_awal'), '%Y-%m-%d').date()
+    tanggal_fasilitas_akhir = datetime.strptime(request.POST.get('tanggal_fasilitas_awal'), '%Y-%m-%d').date()
+    waktu_fasilitas_awal = request.POST.get('waktu_fasilitas_awal')
+    waktu_fasilitas_akhir = request.POST.get('waktu_fasilitas_akhir')
+    keterangan_tempat = request.POST.get('keterangan_tempat')
+    keterangan_fasilitas = request.POST.get('keterangan_fasilitas')
+    biaya_tempat = int(request.POST.get('biaya_tempat'))
+    biaya_fasilitas = int(request.POST.get('biaya_fasilitas'))
+    warning_selasar = request.POST.get('warning_selasar', False) == 'on'
+    konfirmasi_status = request.POST.get('konfirmasi_status', False) == 'on'
+    diskon = int(request.POST.get('diskon'))
+    tembusan1 = request.POST.get('tembusan1', False) == 'on'
+    tembusan2 = request.POST.get('tembusan2', False) == 'on'
+    tembusan3 = request.POST.get('tembusan3', False) == 'on'
+    tembusan4 = request.POST.get('tembusan4', False) == 'on'
+    tembusan = []
+    if tembusan1:
+        tembusan.append({'str': 'Wakil Rektor Bidang Sumberdaya dan Organisasi'})
+    if tembusan2:
+        tembusan.append({'str': 'Direktur Sarana dan Prasarana (sebagai laporan)'})
+    if tembusan3:
+        tembusan.append({'str': 'Kepala UPT K3L'})
+    if tembusan4:
+        tembusan.append({'str': 'Petugas Ruangan'})
+
+    generate_surat(nomor_surat, tahun_surat, tanggal_surat, tujuan_surat, 
+	    nomor_tl, tanggal_tl, terima_tl, tempat, fasilitas, kegiatan,
+	    tanggal_tempat_awal, tanggal_tempat_akhir, waktu_tempat_awal,
+	    waktu_tempat_akhir, tanggal_fasilitas_awal, tanggal_fasilitas_akhir,
+	    waktu_fasilitas_awal, waktu_fasilitas_akhir, keterangan_tempat,
+	    keterangan_fasilitas, biaya_tempat, biaya_fasilitas, warning_selasar,
+	    konfirmasi_status, diskon, tembusan)
+
+    file_path = os.path.join(settings.STATIC_ROOT, 'surat.docx')
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as f:
+            response = HttpResponse(f.read(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+            response['Content-Disposition'] = 'attachment; filename=' + nama_file + '.docx'
+            return response
+    raise Http404
+
 
 
 # Return a form which'll be used to delete peminjaman object to model
@@ -492,3 +559,81 @@ def fetchrecord(request, d = date.today()):
 def fetchrecord_umum(request, d = date.today()):
     selected_peminjaman = Peminjaman.objects.filter(waktu_awal__range = [diff_months(d,6).strftime('%Y-%m-%d'),add_months(d,6).strftime('%Y-%m-%d')]).filter(ruangan__restricted = False).values()
     return JsonResponse({'results': list(selected_peminjaman)})
+    
+
+
+#printsurat
+    
+def date_format(date):
+    MONTH_NAME = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+	'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+    return '{} {} {}'.format(date.day, MONTH_NAME[date.month-1], date.year)
+
+def time_format(time):
+    return time.replace(':', '.')
+	
+def range_format(start, end):
+	return '{} - {}'.format(start, end)
+
+def price_format(price):
+	return '{0:,d}'.format(price).replace(',', '.')
+
+def date_singrange_format(start, end):
+	return date_format(start) if start == end else range_format(date_format(start), date_format(end))
+
+def generate_surat (nomor, tahun, tanggal, tujuan, nomor_tl, tanggal_tl, 
+	terima_tl, tempat, fasilitas, kegiatan, 
+	tanggal_tempat_awal, tanggal_tempat_akhir, waktu_tempat_awal, waktu_tempat_akhir,
+	tanggal_fasilitas_awal, tanggal_fasilitas_akhir, waktu_fasilitas_awal, waktu_fasilitas_akhir,
+	keterangan_tempat, keterangan_fasilitas, biaya_tempat, biaya_fasilitas, warning_selasar, konfirmasi_status, diskon,
+	tembusan_list):
+		
+	hari_tempat = (tanggal_tempat_akhir - tanggal_tempat_awal).days + 1
+	hari_fasilitas = (tanggal_fasilitas_akhir - tanggal_fasilitas_akhir).days + 1
+	total_tempat = hari_tempat * biaya_tempat
+	total_fasilitas = hari_fasilitas * biaya_fasilitas
+	keringanan = (total_tempat + total_fasilitas) * diskon / 100
+
+	info_list = []
+	info_list.append({
+		'nama': tempat, 
+		'tanggal': date_singrange_format(tanggal_tempat_awal, tanggal_tempat_akhir), 
+		'waktu': time_format(range_format(waktu_tempat_awal, waktu_tempat_akhir)),
+		'keterangan': keterangan_tempat,
+		'hari': hari_tempat,
+		'biaya': price_format(biaya_tempat),
+		'total': price_format(total_tempat)})
+	info_list.append({
+		'nama': fasilitas, 
+		'tanggal': date_singrange_format(tanggal_fasilitas_awal, tanggal_fasilitas_akhir), 
+		'waktu': time_format(range_format(waktu_fasilitas_awal, waktu_fasilitas_akhir)),
+		'keterangan': keterangan_fasilitas, 
+		'hari': hari_fasilitas,
+		'biaya': price_format(biaya_fasilitas),
+		'total': price_format(total_fasilitas)})
+	info_list = [x for x in info_list if x['nama'] != '']
+	price_list = [x for x in info_list if x['biaya'] != '0']
+		
+	doc = DocxTemplate(os.path.join(settings.STATIC_ROOT, 'template.docx'))
+	doc.render({
+		'nomor': nomor, 
+		'tahun': tahun,
+		'tanggal': date_format(tanggal),
+		'tujuan': tujuan,
+		'nomor_tl': nomor_tl,
+		'tanggal_tl': date_format(tanggal_tl),
+		'terima_tl': date_format(terima_tl),
+		'info_list': info_list,
+		'price_list': price_list,
+		'tempat': tempat,
+		'kegiatan': kegiatan,
+		'diskon': diskon,
+		'keringanan': price_format(keringanan),
+		'total_biaya': price_format(total_tempat + total_fasilitas - keringanan),
+		'warning_selasar': warning_selasar,
+		'konfirmasi_status': konfirmasi_status,
+        'tembusan_list': tembusan_list
+	})
+	doc.save(os.path.join(settings.STATIC_ROOT, 'surat.docx'))
+
+
