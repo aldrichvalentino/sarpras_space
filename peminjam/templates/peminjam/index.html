@@ -9,7 +9,7 @@
 	table th:hover {
 		cursor: pointer;
 	}
-	
+
 	.arrow-down:after,.arrow-up:after {
 		content: ' ';
 		position: relative;
@@ -44,12 +44,13 @@
   		$interpolateProvider.endSymbol('}]}');
 	});
 	peminjamList.controller("peminjamListController", function($scope, $location) {
-		
+
 		$scope.peminjamListData = [];
 		{% for peminjam in all_peminjam %}
 		$scope.peminjamListData = $scope.peminjamListData.concat({
 			id: "{{ peminjam.id }}",
 			nama:"{{ peminjam.nama }}",
+			tipe:"{{ peminjam.tipe }}",
 			deskripsi:"{{ peminjam.deskripsi }}",
 			edit_link: "{% url 'peminjam:edit' peminjam.id %}"
 		});
@@ -69,19 +70,19 @@
             }
         };
 		*/
-		
+
 		/* EXPERIMENTAL CODE (Add arrow-down and arrow-up) */
-		
+
 		// column state
 		$scope.column = 'id';
-		
+
 		// sort ordering (Ascending or Descending). True for Descending
-		$scope.reverse = false; 
-		
+		$scope.reverse = false;
+
 		$scope.sort = function ( coll ) {
-		
+
 			$scope.column = coll;
-		
+
 			if ($scope.reverse) {
 				$scope.reverse = false;
 				$scope.reverseclass = 'arrow-up';
@@ -89,14 +90,14 @@
 				$scope.reverse = true;
 				$scope.reverseclass = 'arrow-down';
 			}
-			
+
         };
-		
+
 		// change the arrow direction
 		$scope.sortClass = function(col) {
 			if ($scope.column == col) {
 				if ($scope.reverse) {
-					return 'arrow-down'; 
+					return 'arrow-down';
 				} else {
 					return 'arrow-up';
 				}
@@ -128,17 +129,26 @@
 		<!-- EXPERIMENT -->
 		<div class="container-fluid" style="margin-bottom: 10px;margin-top: 10px">
             <div class="row well well-sm">
-                
+							<div class="form-group col-lg-2 col-md-6 col-sm-6">
+												<span><b>Filter Type</b></span>
+												<select ng-model="filterTipe" id="id_tipe" class="form-control input-sm">
+									<option value="" selected>Semua</option>
+									<option value="Fakultas">Fakultas-Prodi</option>
+									<option value="UKA">UKA</option>
+									<option value="UKM">UKM</option>
+								</select>
+							</div>
+
 				<div class="form-group col-lg-2 col-md-6 col-sm-12">
                 	<span><b>Filter Nama</b></span>
 					<input type="text" name="nama" id="id_nama" class="form-control input-sm" ng-model = "filterNama"/>
                 </div>
-				
+
 			</div>
 		</div>
 		<!-- END OF EXPERIMENT -->
-		
-		
+
+
         <div class="row">
             <div class="col-lg-10">
                 <div class="table-responsive">
@@ -146,15 +156,17 @@
                         <thead>
                             <tr>
                                 <th ng-click="sort('nama')" ng-class="sortClass('nama')">Nama</th>
+																<th ng-click="sort('tipe')" ng-class="sortClass('tipe')">Tipe</th>
                                 <th ng-click="sort('deskripsi')" ng-class="sortClass('deskripsi')">Deskripsi</th>
-                            </tr> 
+                            </tr>
                         </thead>
                         <tbody>
-							<tr ng-repeat = "peminjamData in peminjamListData | orderBy : column : reverse | filter:{id:filterId} | filter:{nama:filterNama}">
+							<tr ng-repeat = "peminjamData in peminjamListData | orderBy : column : reverse | filter:{tipe:filterTipe} | filter:{nama:filterNama}">
 
                                 <td ng-click="go(peminjamData.edit_link)"><a href="#">{[{ peminjamData.nama }]}</a></td>
+																<td>{[{ peminjamData.tipe }]}</td>
                                <td>{[{ peminjamData.deskripsi }]}</td>
-							
+
 							</tr>
                         </tbody>
                     </table>
@@ -177,4 +189,3 @@
 </div>
 
 {% endblock %}
-

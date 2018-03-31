@@ -31,6 +31,19 @@
 						</div>
 					</div>
                 </div>
+                <div class="form-group">
+        					<label for="id_tipe" class="control-label col-lg-3">Tipe</label>
+        					<div class="col-lg-9">
+        						<div class="input-group">
+        							<select name="tipe" id="id_tipe" class="form-control">
+        								<option value="Fakultas" {% if selected_peminjam.tipe == "Fakultas" %} selected {% endif %}>Fakultas-Prodi</option>
+        								<option value="UKA" {% if selected_peminjam.tipe == "UKA" %} selected {% endif %}>UKA</option>
+        								<option value="UKM" {% if selected_peminjam.tipe == "UKM" %} selected {% endif %}>UKM</option>
+        							</select>
+        							<span class="input-group-addon" style="font-size: 150%;color: red">*</span>
+        						</div>
+        					</div>
+        				</div>
 
                 <div class="form-group">
 					<label for="id_deskripsi" class="control-label col-lg-3">Deskripsi</label>
@@ -73,4 +86,3 @@
 </div>
 </div>
 {% endblock %}
-
