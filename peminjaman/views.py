@@ -360,9 +360,14 @@ def formedit(request, peminjaman_id = 0):
                     selected_peminjaman.deskripsi = input_deskripsi
                     selected_peminjaman.jumlah_tagihan = input_tagihan
                     selected_peminjaman.no_laporan = input_nomor_surat
-                    if len(request.FILES) != 0:
+                    foto = request.FILES.get('foto', False)
+                    if foto:
                         selected_peminjaman.foto.delete()
                         selected_peminjaman.foto = request.FILES['foto']
+                    foto_bon = request.FILES.get('foto_bon', False)
+                    if foto_bon:
+                        selected_peminjaman.foto_bon.delete()
+                        selected_peminjaman.foto_bon = request.FILES['foto_bon']
                     selected_peminjaman.save()
                     new_log = Log(peminjaman=selected_peminjaman,
                                   peminjaman_str=selected_peminjaman.__str__(),
