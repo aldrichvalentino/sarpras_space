@@ -226,6 +226,7 @@ def formedit(request, peminjaman_id = 0):
     input_tagihan = request.POST.get('harga', selected_peminjaman.jumlah_tagihan)
     input_nomor_surat = request.POST.get('nomor_surat', selected_peminjaman.no_laporan)
     input_tanggal_lunas = request.POST.get('tanggal_bayar', selected_peminjaman.waktu_bayar)
+    foto_bon = request.FILES.get('foto_bon', selected_peminjaman.foto_bon)
 
     input_lunas = ''
 
@@ -400,6 +401,7 @@ def formedit(request, peminjaman_id = 0):
         'nomor_surat': input_nomor_surat,
         'input_lunas': input_lunas,
         'waktu_bayar': input_tanggal_lunas,
+        'foto_bon' : foto_bon
     })
 
 
