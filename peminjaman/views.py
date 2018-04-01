@@ -154,6 +154,7 @@ def formadd(request):
                     if request.POST['save'] == "Save":
                         return redirect(reverse('peminjaman:index'))
                     else:
+                        all_peminjaman = Peminjaman.objects.all()
                         all_peminjam = Peminjam.objects.all()
                         all_ruangan = Ruangan.objects.all()
                         errormsg = []
@@ -162,6 +163,7 @@ def formadd(request):
                         else: input_tipe = ""
 
                         return render(request, 'peminjaman/add.html', {
+                            'all_peminjaman' : all_peminjaman,
                             'all_peminjam': all_peminjam,
                             'all_ruangan': all_ruangan,
                             'error': errormsg,
@@ -181,12 +183,14 @@ def formadd(request):
                         })
 
     # Apabila tidak redirect ke index, maka kirim form
+    all_peminjaman = Peminjaman.objects.all()
     all_peminjam = Peminjam.objects.all()
     all_ruangan = Ruangan.objects.all()
     if obj_ruangan: input_tipe = obj_ruangan.tipe
     else: input_tipe = ""
 
     return render(request, 'peminjaman/add.html', {
+        'all_peminjaman' : all_peminjaman,
         'all_peminjam': all_peminjam,
         'all_ruangan': all_ruangan,
         'error': errormsg,
