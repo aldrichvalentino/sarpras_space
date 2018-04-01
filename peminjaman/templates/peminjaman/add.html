@@ -9,7 +9,7 @@
 {% block body %}
 
 <script>
-    var peminjamList = angular.module('peminjamList', []);
+    var peminjamList = angular.module('peminjamList', ['ngSanitize']);
     peminjamList.config(function($interpolateProvider) {
   		$interpolateProvider.startSymbol('{[{');
   		$interpolateProvider.endSymbol('}]}');
@@ -47,6 +47,89 @@
 		$scope.filterTipe = "{{input_tipe}}";
 
 	});
+    peminjamList.controller("timeCheckController", function($scope) {
+        var listPeminjaman = [];
+        {% for peminjaman in all_peminjaman %}
+        listPeminjaman = listPeminjaman.concat({
+            waktu_awal: "{{ peminjaman.waktu_awal }}",
+            waktu_akhir: "{{ peminjaman.waktu_akhir }}"
+        });
+        {% endfor %}
+        $scope.test = "";
+
+        var waktu_awal_0 = document.getElementById('id_waktu_awal_0').value;
+        var waktu_awal_1 = document.getElementById('id_waktu_awal_1').value;
+        var waktu_awal = new Date(2018, 2, 13, 09, 00);
+        console.log(waktu_awal);
+
+        var waktu_akhir_0 = document.getElementById('id_waktu_akhir_0').value;
+        var waktu_akhir_1 = document.getElementById('id_waktu_akhir_1').value;
+        var waktu_akhir = new Date(2018, 2, 13, 09, 59);
+        console.log(waktu_akhir);
+
+        var waktu_awal_arr = listPeminjaman[0].waktu_awal.split(" ");
+        var waktu_awal_old = new Date(waktu_awal_arr[2].slice(0,4), monthToInt(waktu_awal_arr[1]),waktu_awal_arr[0],waktu_awal_arr[3].slice(0,waktu_awal_arr[3].search("\\.")),waktu_awal_arr[3].slice(waktu_awal_arr[3].search("\\.")+1));
+        console.log(waktu_awal_old);
+
+        var waktu_akhir_arr = listPeminjaman[0].waktu_akhir.split(" ");
+        var waktu_akhir_old = new Date(waktu_akhir_arr[2].slice(0,4), monthToInt(waktu_akhir_arr[1]),waktu_akhir_arr[0],waktu_akhir_arr[3].slice(0,waktu_akhir_arr[3].search("\\.")),waktu_akhir_arr[3].slice(waktu_akhir_arr[3].search("\\.")+1));
+        console.log(waktu_akhir_old);
+
+        console.log(((waktu_awal_old <= waktu_awal) && (waktu_awal <= waktu_akhir_old)) || ((waktu_awal_old <= waktu_akhir)&&(waktu_akhir <= waktu_akhir_old)));
+        function monthToInt(month){
+            var listBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            var i = 0;
+            while (i<listBulan.length && month != listBulan[i]) {
+                i++;
+            }
+            return i;
+        } 
+        $scope.dateCheck = function(){
+            var check = false;
+            function checkDate() {
+                var chk = false;
+
+                var waktu_awal_0 = document.getElementById('id_waktu_awal_0').value;
+                var waktu_awal_1 = document.getElementById('id_waktu_awal_1').value;
+                var waktu_awal = new Date(waktu_awal_0.slice(0,4), waktu_awal_0.slice(5,7)-1, waktu_awal_0.slice(8,10), waktu_awal_1.slice(0,2), waktu_awal_1.slice(3,5));
+                
+                var waktu_akhir_0 = document.getElementById('id_waktu_akhir_0').value;
+                var waktu_akhir_1 = document.getElementById('id_waktu_akhir_1').value;
+                var waktu_akhir = new Date(waktu_akhir_0.slice(0,4), waktu_akhir_0.slice(5,7)-1, waktu_akhir_0.slice(8,10), waktu_akhir_1.slice(0,2), waktu_akhir_1.slice(3,5));
+                
+                var i = 0;
+                while(!chk && i<listPeminjaman.length){
+                    var waktu_awal_arr = listPeminjaman[i].waktu_awal.split(" ");
+                    var waktu_awal_old = new Date(waktu_awal_arr[2].slice(0,4), monthToInt(waktu_awal_arr[1]),waktu_awal_arr[0],waktu_awal_arr[3].slice(0,waktu_awal_arr[3].search("\\.")),waktu_awal_arr[3].slice(waktu_awal_arr[3].search("\\.")+1));
+                    var waktu_akhir_arr = listPeminjaman[i].waktu_akhir.split(" ");
+                    var waktu_akhir_old = new Date(waktu_akhir_arr[2].slice(0,4), monthToInt(waktu_akhir_arr[1]),waktu_akhir_arr[0],waktu_akhir_arr[3].slice(0,waktu_akhir_arr[3].search("\\.")),waktu_akhir_arr[3].slice(waktu_akhir_arr[3].search("\\.")+1));
+                    if(((waktu_awal_old <= waktu_awal) && (waktu_awal <= waktu_akhir_old)) || ((waktu_awal_old <= waktu_akhir)&&(waktu_akhir <= waktu_akhir_old))){
+                        chk = true;
+                    } else {
+                        i++;
+                    }
+                }
+                console.log(chk);
+                return chk;   
+            }
+            function monthToInt(month){
+                var listBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                var i = 0;
+                while (i<listBulan.length && month != listBulan[i]) {
+                    i++;
+                }
+                return i;
+            } 
+            check = checkDate();
+            console.log("2");
+            console.log(check);
+            if (check) {
+                $scope.test = "<label class='col-lg-3 control-label text-danger'>Ada yang error!</label>";   
+            } else {
+                $scope.test = "";
+            }
+        }
+    });
 </script>
 <ul class="breadcrumb" style="margin-bottom: 10px;">
     <li><a href="{% url 'peminjaman:index' %}">Peminjaman</a></li>
@@ -115,33 +198,34 @@
                     </div>
                 </div>
 
-                <div ng-class="{'form-group': true, 'has-error' : form.ruangan.$touched&&form.ruangan.$invalid}">
+                <div ng-class="{'form-group': true, 'has-error' : form.ruangan.$touched&&form.ruangan.$invalid}" ng-controller="timeCheckController">
                     <label class="col-lg-3 control-label">Waktu awal</label>
+                    <span ng-bind-html=test></span>
                     <div class="col-md-7">
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="waktu_awal_0" id="id_waktu_awal_0" class="form-control" value="{{ tanggal_awal }}" required />
+                                <input type="date" ng-change="dateCheck()" ng-model="waktu_awal_0" name="waktu_awal_0" id="id_waktu_awal_0" class="form-control" value="{{ tanggal_awal }}" required />
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 30px">Jam</span>
-                                <input type="time" name="waktu_awal_1" id="id_waktu_awal_1" class="form-control" value="{{ pukul_awal }}" required />
+                                <input type="time" ng-change="dateCheck()" ng-model="waktu_awal_1" name="waktu_awal_1" id="id_waktu_awal_1" class="form-control" value="{{ pukul_awal }}" required />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" ng-controller="timeCheckController">
                     <label class="col-lg-3 control-label">Waktu akhir</label>
                     <div class="col-md-7">
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="waktu_akhir_0" id="id_waktu_akhir_0" class="form-control" value="{{ tanggal_akhir }}" required />
+                                <input type="date" ng-change="dateCheck()" ng-model="waktu_akhir_0" name="waktu_akhir_0" id="id_waktu_akhir_0" class="form-control" value="{{ tanggal_akhir }}" required />
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 25px">Waktu</span>
-                                <input type="time" name="waktu_akhir_1" id="id_waktu_akhir_1" class="form-control" value="{{ pukul_akhir }}" required />
+                                <input type="time" ng-change="dateCheck()" ng-model="waktu_akhir_1" name="waktu_akhir_1" id="id_waktu_akhir_1" class="form-control" value="{{ pukul_akhir }}" required />
                             </div>
                         </div>
                     </div>
