@@ -52,10 +52,19 @@
         {% for peminjaman in all_peminjaman %}
         listPeminjaman = listPeminjaman.concat({
             waktu_awal: "{{ peminjaman.waktu_awal }}",
-            waktu_akhir: "{{ peminjaman.waktu_akhir }}"
+            waktu_akhir: "{{ peminjaman.waktu_akhir }}",
+            ruangan: "{{ peminjaman.ruangan }}",
+            peminjam: "{{ peminjaman.peminjam }}"
         });
         {% endfor %}
-        $scope.test = "";
+        
+        var listRuangan = [];
+        {% for ruangan in all_ruangan %}
+            listRuangan = listRuangan.concat({
+                id: "{{ ruangan.id }}", 
+                nama: "{{ ruangan.nama }}"
+            });
+        {% endfor %}
 
         var waktu_awal_0 = document.getElementById('id_waktu_awal_0').value;
         var waktu_awal_1 = document.getElementById('id_waktu_awal_1').value;
@@ -76,14 +85,29 @@
         console.log(waktu_akhir_old);
 
         console.log(((waktu_awal_old <= waktu_awal) && (waktu_awal <= waktu_akhir_old)) || ((waktu_awal_old <= waktu_akhir)&&(waktu_akhir <= waktu_akhir_old)));
+        console.log(listPeminjaman[0].ruangan);
+        console.log(listPeminjaman[0].peminjam);
+        
         function monthToInt(month){
-            var listBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            var listBulan = ["Januari",
+                            "Februari",
+                            "Maret", 
+                            "April", 
+                            "Mei", 
+                            "Juni", 
+                            "Juli", 
+                            "Agustus", 
+                            "September", 
+                            "Oktober", 
+                            "November", 
+                            "Desember"];
             var i = 0;
             while (i<listBulan.length && month != listBulan[i]) {
                 i++;
             }
             return i;
-        } 
+        }
+
         $scope.dateCheck = function(){
             var check = false;
             function checkDate() {
@@ -97,13 +121,21 @@
                 var waktu_akhir_1 = document.getElementById('id_waktu_akhir_1').value;
                 var waktu_akhir = new Date(waktu_akhir_0.slice(0,4), waktu_akhir_0.slice(5,7)-1, waktu_akhir_0.slice(8,10), waktu_akhir_1.slice(0,2), waktu_akhir_1.slice(3,5));
                 
+                var ruangan_tipe = document.getElementById('id_tipe').value;
+                console.log(ruangan_tipe);
+                var ruangan_id = document.getElementById('id_ruangan').value;
+                var ruangan_nama = listRuangan[ruangan_id-1].nama
+                console.log(listRuangan[ruangan_id-1].nama);
+                console.log(ruangan_nama + " - " +ruangan_tipe);
+                var ruangan = ruangan_nama + " - " +ruangan_tipe;
+
                 var i = 0;
                 while(!chk && i<listPeminjaman.length){
                     var waktu_awal_arr = listPeminjaman[i].waktu_awal.split(" ");
                     var waktu_awal_old = new Date(waktu_awal_arr[2].slice(0,4), monthToInt(waktu_awal_arr[1]),waktu_awal_arr[0],waktu_awal_arr[3].slice(0,waktu_awal_arr[3].search("\\.")),waktu_awal_arr[3].slice(waktu_awal_arr[3].search("\\.")+1));
                     var waktu_akhir_arr = listPeminjaman[i].waktu_akhir.split(" ");
                     var waktu_akhir_old = new Date(waktu_akhir_arr[2].slice(0,4), monthToInt(waktu_akhir_arr[1]),waktu_akhir_arr[0],waktu_akhir_arr[3].slice(0,waktu_akhir_arr[3].search("\\.")),waktu_akhir_arr[3].slice(waktu_akhir_arr[3].search("\\.")+1));
-                    if(((waktu_awal_old <= waktu_awal) && (waktu_awal <= waktu_akhir_old)) || ((waktu_awal_old <= waktu_akhir)&&(waktu_akhir <= waktu_akhir_old))){
+                    if(listPeminjaman[i].ruangan == ruangan && (((waktu_awal_old <= waktu_awal) && (waktu_awal <= waktu_akhir_old)) || ((waktu_awal_old <= waktu_akhir)&&(waktu_akhir <= waktu_akhir_old)))){
                         chk = true;
                     } else {
                         i++;
@@ -112,6 +144,7 @@
                 console.log(chk);
                 return chk;   
             }
+
             function monthToInt(month){
                 var listBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
                 var i = 0;
@@ -119,14 +152,15 @@
                     i++;
                 }
                 return i;
-            } 
+            }
+
             check = checkDate();
             console.log("2");
             console.log(check);
             if (check) {
-                $scope.test = "<label class='col-lg-3 control-label text-danger'>Ada yang error!</label>";   
+                document.getElementById("id_error_input_tanggal").innerHTML = "<div class='alert alert-danger'><strong>Jadwal bentrok!</strong></div>";   
             } else {
-                $scope.test = "";
+                document.getElementById("id_error_input_tanggal").innerHTML = "";
             }
         }
     });
@@ -200,7 +234,6 @@
 
                 <div ng-class="{'form-group': true, 'has-error' : form.ruangan.$touched&&form.ruangan.$invalid}" ng-controller="timeCheckController">
                     <label class="col-lg-3 control-label">Waktu awal</label>
-                    <span ng-bind-html=test></span>
                     <div class="col-md-7">
                         <div class="input-group">
                             <div class="input-group">
@@ -230,7 +263,11 @@
                         </div>
                     </div>
                 </div>
+                
+                <div id="id_error_input_tanggal">
 
+                </div>
+                
                 <div class="form-group">
                     <label for="id_deskripsi" class="col-lg-3 control-label">Deskripsi</label>
                     <div class="col-lg-9">
