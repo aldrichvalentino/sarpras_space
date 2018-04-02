@@ -33,10 +33,28 @@ def index(request, errormsg=''):
 
 @login_required
 def kalender(request, errormsg=''):
-    return render(request, 'peminjaman/kalender.html', {})
+    all_peminjaman = Peminjaman.objects.all()
+    all_ruangan = Ruangan.objects.all()
+    all_peminjam = Peminjam.objects.all()
+    return render(request, 'peminjaman/kalender.html', {
+        'all_peminjaman' : all_peminjaman,
+        'all_ruangan' : all_ruangan,
+        'all_peminjam' : all_peminjam,
+        'error' : errormsg
+    })
+    # return render(request, 'peminjaman/kalender.html', {})
 
 def kalender_umum(request, errormsg=''):
-    return render(request, 'peminjaman/kalender_umum.html', {})
+    all_peminjaman = Peminjaman.objects.all()
+    all_ruangan = Ruangan.objects.all()
+    all_peminjam = Peminjam.objects.all()
+    return render(request, 'peminjaman/kalender_umum.html', {
+        'all_peminjaman' : all_peminjaman,
+        'all_ruangan' : all_ruangan,
+        'all_peminjam' : all_peminjam,
+        'error' : errormsg
+    })
+    # return render(request, 'peminjaman/kalender_umum.html', {})
 
 
 # Return a form which'll be used to add new Peminjaman object to model

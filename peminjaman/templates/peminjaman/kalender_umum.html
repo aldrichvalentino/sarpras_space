@@ -37,9 +37,9 @@
             <span class="navbar-brand" style="color: white">Kalender Peminjaman</span>
         </div>
     </div>
-    <ul class="nav navbar-nav navbar-right">
+    <!-- <ul class="nav navbar-nav navbar-right">
         <li><a href="{% url 'login' %}">Login</a></li>
-    </ul>
+    </ul> -->
     </div>
 </nav>
 
@@ -71,13 +71,14 @@
             <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left; padding-right: 33px">Bulan </span>
-                        <select ng-model="filter_month" ng-options="x.name for x in poss_month" class="form-control input-sm" ng-change="filterEvents('filter')">
-                        </select>
+                        <span class="input-group-addon" style="text-align: left; padding-right: 20px">Tanggal </span>
+                        <input type="date" ng-model="date_filter" class="form-control input-sm" ng-change="filterEvents('filter')">
+                        <!-- <select ng-model="filter_month" ng-options="x.name for x in poss_month" class="form-control input-sm" ng-change="filterEvents('filter')">
+                        </select> -->
                     </div>
                 </div>
             </div>
-            <div class="row" style="padding:8px">
+            <!-- <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
                         <span class="input-group-addon" style="text-align: left; padding-right: 20px">Tanggal </span>
@@ -85,7 +86,7 @@
                         </select>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="row" style="padding:8px">
                 <div class="col-xs-12">
                     <div class="input-group" style="text-align: left">
@@ -271,6 +272,11 @@
         $scope.filterDays = function(item) {
             return item.startTime.getDate() == $scope.filter_day.id;
         }
+
+        $scope.filterDate = function(item) {
+            return item.startTime.getDate() <= $scope.date_filter.getDate()
+                && item.endTime.getDate() >= $scope.date_filter.getDate();
+        }
         
         /* Filtering */
         $scope.filterRuangan = "Semua";
@@ -284,11 +290,15 @@
             if($scope.filterRuangan !== "Semua"){
                 events = $filter('filter')(events, {ruangan: $scope.filterRuangan});
             }
-            if($scope.filter_month.id != 12){
-                events = $filter('filter')(events, $scope.filterMonths);
-            }
-            if($scope.filter_day.id != 0){
-                events = $filter('filter')(events, $scope.filterDays);
+            // if($scope.filter_month.id != 12){
+            //     events = $filter('filter')(events, $scope.filterMonths);
+            // }
+            // if($scope.filter_day.id != 0){
+            //     events = $filter('filter')(events, $scope.filterDays);
+            // }
+
+            if($scope.date_filter != null){
+                events = $filter('filter')(events, $scope.filterDate);
             }
 
             $scope.eventSource = events;
