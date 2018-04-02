@@ -37,9 +37,6 @@
             <span class="navbar-brand" style="color: white">Kalender Peminjaman</span>
         </div>
     </div>
-    <!-- <ul class="nav navbar-nav navbar-right">
-        <li><a href="{% url 'login' %}">Login</a></li>
-    </ul> -->
     </div>
 </nav>
 
@@ -73,27 +70,15 @@
                     <div class="input-group">
                         <span class="input-group-addon" style="text-align: left; padding-right: 20px">Tanggal </span>
                         <input type="date" ng-model="date_filter" class="form-control input-sm" ng-change="filterEvents('filter')">
-                        <!-- <select ng-model="filter_month" ng-options="x.name for x in poss_month" class="form-control input-sm" ng-change="filterEvents('filter')">
-                        </select> -->
                     </div>
                 </div>
             </div>
-            <!-- <div class="row" style="padding:8px">
-                <div class="col-md-6 col-xs-12">
-                    <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left; padding-right: 20px">Tanggal </span>
-                        <select ng-model="filter_day" ng-options="x.name for x in poss_day" class="form-control input-sm" ng-change="filterEvents('filter')">
-                        </select>
-                    </div>
-                </div>
-            </div> -->
             <div class="row" style="padding:8px">
                 <div class="col-xs-12">
                     <div class="input-group" style="text-align: left">
                             <span class="input-group-addon" style="text-align: left">Refresh </span>
                             <span type="button" class="glyphicon glyphicon-refresh btn btn-link btn-sm" ng-click="filterEvents('filter')" id="calendarRefresh" aria-hidden="true">
                             </span>
-                        <!-- </span> -->
                     </div>
                 </div>
             </div>
@@ -127,33 +112,6 @@
             $interpolateProvider.endSymbol('}]}');
     }).controller('CalendarDemoCtrl',['$scope','$http','$timeout', '$filter', function ($scope, $http, $timeout, $filter) {
         'use strict';
-
-        // create months
-        $scope.poss_month = [
-            {id : "12", name : "Semua"},
-            {id : "00", name : "Januari"},
-            {id : "01", name : "Februari"},
-            {id : "02", name : "Maret"},
-            {id : "03", name : "April"},
-            {id : "04", name : "Mei"},
-            {id : "05", name : "Juni"},
-            {id : "06", name : "Juli"},
-            {id : "07", name : "Agustus"},
-            {id : "08", name : "September"},
-            {id : "09", name : "Oktober"},
-            {id : "10", name : "November"},
-            {id : "11", name : "Desember"},
-            ];
-        $scope.filter_month = $scope.poss_month[0];
-
-        // create days
-        $scope.poss_day = [
-            {id : "0", name : "Semua"}
-        ];
-        for(var i = 1; i <= 31; i++){
-            $scope.poss_day.push({id: i, name: i});
-        }
-        $scope.filter_day = $scope.poss_day[0];
 
         // calendar mode
         $scope.changeMode = function (mode) {
@@ -264,15 +222,6 @@
             });
         };
 
-        // custom filter function
-        $scope.filterMonths = function(item) {
-            return item.startTime.getMonth() == $scope.filter_month.id;
-        }
-
-        $scope.filterDays = function(item) {
-            return item.startTime.getDate() == $scope.filter_day.id;
-        }
-
         $scope.filterDate = function(item) {
             return item.startTime.getDate() <= $scope.date_filter.getDate()
                 && item.endTime.getDate() >= $scope.date_filter.getDate();
@@ -290,13 +239,6 @@
             if($scope.filterRuangan !== "Semua"){
                 events = $filter('filter')(events, {ruangan: $scope.filterRuangan});
             }
-            // if($scope.filter_month.id != 12){
-            //     events = $filter('filter')(events, $scope.filterMonths);
-            // }
-            // if($scope.filter_day.id != 0){
-            //     events = $filter('filter')(events, $scope.filterDays);
-            // }
-
             if($scope.date_filter != null){
                 events = $filter('filter')(events, $scope.filterDate);
             }

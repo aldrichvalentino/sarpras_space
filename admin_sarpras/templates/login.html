@@ -17,7 +17,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 
     <!-- jQuery -->
-    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static 'js/bootstrap.min.js' %}" ></script>
@@ -27,43 +27,37 @@
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class=" col-lg-offset-4 col-lg-4" >
-                <div class="panel panel-primary" style="position: relative; transform: translateY(50%);">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Admin Peminjaman Login</h3>
-                    </div>
-                    <div class="panel-body">
-                        <form action="{% url 'login' %}" method="post" accept-charset="utf-8" class="form-horizontal">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <div class="col-md-offset-1 col-md-10">
-                                    <label for="id_username" class="control-label">Nama pengguna</label>
-                                    <input autofocus="" id="id_username" maxlength="254" name="username"
-                                           type="text" class="form-control" required />
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-md-offset-1 col-md-10">
-                                    <label for="id_password" class="control-label">Sandi</label>
-                                    <input id="id_password" name="password" type="password" class="form-control" required />
-                                </div>
-                            </div>
-
-                            {% for error_item in form.errors %}
-                                <li>{{ error_item }}</li>
-                            {% endfor %}
-
-                            <input type="hidden" name="next" value="{% if input_peminjam %}{{ next }}{% else %}{% url 'peminjaman:index' %}{% endif %}" />
-                            <div class="col-md-offset-1 col-md-10" style="text-align: right;padding-right: 2px">
-                                <input class="btn-sm btn btn-primary" type="submit" value="Submit"/>
-                            </div>
-                        </form>
-                    </div>
+<div class="panel panel-primary" style="margin:10% 20% 0 20%">
+    <div class="panel-heading">
+        <h3 class="panel-title">Login Admin Peminjaman</h3>
+    </div>
+    <div class="panel-body">
+        <form action="{% url 'login' %}" method="post" accept-charset="utf-8" class="form-horizontal">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="col-md-offset-1 col-md-10">
+                    <label for="id_username" class="control-label">Nama pengguna</label>
+                    <input autofocus="" id="id_username" maxlength="254" name="username"
+                            type="text" class="form-control" required />
                 </div>
             </div>
-        </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-1 col-md-10">
+                    <label for="id_password" class="control-label">Sandi</label>
+                    <input id="id_password" name="password" type="password" class="form-control" required />
+                </div>
+            </div>
+
+            {% for errors in form.errors %}
+                <div class="col-md-10 col-md-offset-1 alert alert-danger">{{ form.non_field_errors.as_text }}</div>
+            {% endfor %}
+
+            <input type="hidden" name="next" value="{% if input_peminjam %}{{ next }}{% else %}{% url 'peminjaman:index' %}{% endif %}" />
+            <div class="col-md-offset-1 col-md-10" style="text-align: right;padding-right: 2px; margin-top: 2%">
+                <input class="btn-md btn btn-primary" type="submit" value="Submit"/>
+            </div>
+        </form>
     </div>
+</div>
 </body>
