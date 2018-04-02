@@ -209,12 +209,12 @@
                     <div class="col-lg-9">
                       <label class="btn btn-default btn-sm">
                         Pilih Foto ...
-                        <input type="file" name="foto_bon" style="display: none" value="{{ foto_bon }}">
+                        <input type="file" id="id_formbon" name="foto_bon" style="display: none">
                       </label>
                     </div>
                   </div>
                   <div class="square">
-                      <img src="/img/{{ foto_bon }}" class="img-responsive">
+                      <img id="id_fotobon" class="img-responsive">
                   </div>
                 </div>
 
@@ -295,6 +295,13 @@
            filled = $('#id_bayar').attr('value');
            console.log('empty : ' + filled);
        }
+       bon_addr = "{{ foto_bon }}";
+       if (bon_addr == '') {
+        $('#id_fotobon').attr('src', '/img/bon/bondefault.png');
+       }
+       else {
+        $('#id_fotobon').attr('src', '/img/'+bon_addr);
+       }
    }
 
    function changed() {
@@ -322,5 +329,13 @@
            $('#id_bayar').attr('value', current_date);
        }
    }
+   $('#id_formbon').change(function() {
+    var input = this;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      $('#id_fotobon').attr('src', e.target.result);
+    }
+    reader.readAsDataURL(input.files[0]);
+   })
 </script>
 {% endblock %}
