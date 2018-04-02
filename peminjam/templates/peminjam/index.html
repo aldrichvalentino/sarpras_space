@@ -46,6 +46,10 @@
 	peminjamList.controller("peminjamListController", function($scope, $location) {
 
 		$scope.peminjamListData = [];
+		$scope.fakultas = [];
+		$scope.ukm = [];
+		$scope.uka = [];
+
 		{% for peminjam in all_peminjam %}
 		$scope.peminjamListData = $scope.peminjamListData.concat({
 			id: "{{ peminjam.id }}",
@@ -54,6 +58,29 @@
 			deskripsi:"{{ peminjam.deskripsi }}",
 			edit_link: "{% url 'peminjam:edit' peminjam.id %}"
 		});
+
+		{% if peminjam.tipe == "Fakultas-Prodi" %}
+		$scope.fakultas = $scope.fakultas.concat({
+			id: "{{ peminjam.id }}",
+			nama:"{{ peminjam.nama }}"
+		});
+		{% endif %}
+
+		{% if peminjam.tipe == "UKM" %}
+		$scope.ukm = $scope.ukm.concat({
+			id: "{{ peminjam.id }}",
+			nama:"{{ peminjam.nama }}"
+		});
+		{% endif %}
+
+		{% if peminjam.tipe == "UKA" %}
+		$scope.uka = $scope.uka.concat({
+			id: "{{ peminjam.id }}",
+			nama:"{{ peminjam.nama }}"
+		});
+		{% endif %}
+
+
 		{% endfor %}
 
 		$scope.go = function ( path ) {
@@ -75,6 +102,8 @@
 
 		// column state
 		$scope.column = 'id';
+
+		$scope.filterTipe = "";
 
 		// sort ordering (Ascending or Descending). True for Descending
 		$scope.reverse = false;
@@ -107,15 +136,15 @@
 		};
 
 		//TODO: Lengkapi list fakultas-prodi
-		$scope.fakultas = [
+		/*$scope.fakultas = [
 		{key: '', value:''},
 		{key: 'STEI-Teknik Elektro', value: 'STEI-Teknik Elektro'},
 		{key: 'STEI-Teknik Informatika', value: 'STEI-Teknik Informatika'},
 		{key: 'Lainnya', value:''}
-	];
+	];*/
 
 	//TODO: Lengkapi list UKM
-		$scope.ukm = [
+		/*$scope.ukm = [
 			{key: '', value:''},
 			{key: 'Himpunan Mahasiswa Informatika (HMIF)', value: 'Himpunan Mahasiswa Informatika (HMIF)'},
 			{key: 'Himpunan Mahasiswa Elektroteknik (HME)', value: 'Himpunan Mahasiswa Elektroteknik (HME)'},
@@ -123,11 +152,11 @@
 			{key: 'Lainnya', value:''}
 
 
-	];
+	];*/
 
 	//TODO: Lengkapi list UKA
-	$scope.uka =[''];
-	});
+	/*$scope.uka =[''];*/
+});
 
 
 	$(document).ready(function () {
@@ -156,42 +185,26 @@
 							<div class="form-group col-lg-2 col-md-6 col-sm-6">
 												<span><b>Filter Type</b></span>
 												<select ng-model="filterTipe" id="id_tipe" class="form-control input-sm">
-									<option value="" selected>Semua</option>
-									<option value="Fakultas">Fakultas-Prodi</option>
+									<option value="">Semua</option>
+									<option value="Fakultas-Prodi">Fakultas-Prodi</option>
 									<option value="UKA">UKA</option>
 									<option value="UKM">UKM</option>
 								</select>
 							</div>
 
-				<div ng-switch="filterTipe">
-				<div  class="form-group col-lg-2 col-md-6 col-sm-12" ng-switch-when="Fakultas">
-                	<span><b>Filter Fakultas-Prodi</b></span>
-									<select ng-model="$parent.filterNama" name="nama" id="id_nama" class="form-control input-sm">
-										<option ng-repeat="option in fakultas" value="{[{option.value}]}">{[{option.key}]}</option>
+				<div  class="form-group col-lg-2 col-md-6 col-sm-12">
+                	<span><b>Filter nama</b></span>
+									<select ng-model="filterNama" name="nama" id="id_nama" class="form-control input-sm" ng-switch="filterTipe">
+												<option value="" selected>Semua</option>
+												<option ng-repeat="peminjam in fakultas" value="{[{peminjam.nama}]}" ng-switch-when="Fakultas-Prodi">{[{peminjam.nama}]}</option>
+												<option ng-repeat="peminjam in uka" value="{[{peminjam.nama}]}" ng-switch-when="UKA">{[{peminjam.nama}]}</option>
+											<option ng-repeat="peminjam in ukm" value="{[{peminjam.nama}]}" ng-switch-when="UKM">{[{peminjam.nama}]}</option>
+											<option ng-repeat="peminjam in peminjamListData" value="{[{peminjam.nama}]}" ng-switch-when="">{[{peminjam.nama}]}</option>
 					</select>
-                </div>
-				<div class="form-group col-lg-2 col-md-6 col-sm-12" ng-switch-when="UKA">
-				            <span><b>Filter UKA</b></span>
-										<select ng-model="$parent.filterNama" name="nama" id="id_nama" class="form-control input-sm">
-											<option ng-repeat="option in uka" value="{[{option.value}]}">{[{option.key}]}</option>
-				</select>
-				          </div>
-				<div  class="form-group col-lg-2 col-md-6 col-sm-12" ng-switch-when="UKM">
-					           <span><b>Filter UKM</b></span>
-								<select ng-model="$parent.filterNama" name="nama" id="id_nama" class="form-control input-sm">
-									<option ng-repeat="option in ukm" value="{[{option.value}]}">{[{option.key}]}</option>
-					</select>
-					        </div>
-				<div ng-switch="filterNama">
-					<div class="form-group col-lg-2 col-md-6 col-sm-6" ng-switch-when="">
-	                    <span><b>Filter Lainnya</b></span>
-	                    <input type="text" name="nama" id="id_nama" class="form-control input-sm" ng-model = "$parent.filterNama2"/>
-	                </div>
+				</div>
 				</div>
 
 		</div>
-	</div>
-</div>
 		<!-- END OF EXPERIMENT -->
 
 
@@ -207,7 +220,7 @@
                             </tr>
                         </thead>
                         <tbody>
-							<tr ng-repeat = "peminjamData in peminjamListData | orderBy : column : reverse | filter:{tipe:filterTipe} | filter:{nama:filterNama} | filter:{nama:filterNama2}">
+							<tr ng-repeat = "peminjamData in peminjamListData | orderBy : column : reverse | filter:{tipe:filterTipe} | filter:{nama:filterNama}">
 
                                 <td ng-click="go(peminjamData.edit_link)"><a href="#">{[{ peminjamData.nama }]}</a></td>
 																<td>{[{ peminjamData.tipe }]}</td>
