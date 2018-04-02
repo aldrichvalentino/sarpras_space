@@ -194,7 +194,8 @@
                     </div>
                 </div>
 
-				<div class="form-group" ng-show="lunas.value1">
+				        <div class="form-group" ng-show="lunas.value1">
+                  <div class="row">
                     <label for="id_bayar" class="col-lg-3 control-label">Waktu Pembayaran</label>
                     <div class="col-lg-9" id="id_tanggal_bayar">
                         <div class="input-group">
@@ -202,17 +203,30 @@
                             <span class="input-group-addon" style="font-size: 150%;color: red">*</span>
                         </div>
                     </div>
+                  </div>
+                  <div class="row">
+                    <label for="id_bon" class="control-label col-lg-3">Unggah Bon</label>
+                    <div class="col-lg-9">
+                      <label class="btn btn-default btn-sm">
+                        Pilih Foto ...
+                        <input type="file" id="id_formbon" name="foto_bon" style="display: none">
+                      </label>
+                    </div>
+                  </div>
+                  <div class="square">
+                      <img id="id_fotobon" class="img-responsive">
+                  </div>
                 </div>
 
                 <div class="form-group">
-					<label for="id_harga" class="control-label col-lg-3">Unggah Poster</label>
-					<div class="col-lg-9">
-						<label class="btn btn-default btn-sm">
-							Pilih Foto ...
-							<input type="file" name="foto" style="display: none">
-						</label>
-					</div>
-				</div>
+					         <label for="id_harga" class="control-label col-lg-3">Unggah Poster</label>
+					         <div class="col-lg-9">
+						        <label class="btn btn-default btn-sm">
+							       Pilih Foto ...
+							      <input type="file" name="foto" style="display: none">
+						        </label>
+					         </div>
+				        </div>
                 <div class="form-group">
                     <div class="col-lg-6 col-lg-offset-3">
                         <input type="submit" value="Save" class="btn btn-primary" >
@@ -281,6 +295,13 @@
            filled = $('#id_bayar').attr('value');
            console.log('empty : ' + filled);
        }
+       bon_addr = "{{ foto_bon }}";
+       if (bon_addr == '') {
+        $('#id_fotobon').attr('src', '/img/bon/bondefault.png');
+       }
+       else {
+        $('#id_fotobon').attr('src', '/img/'+bon_addr);
+       }
    }
 
    function changed() {
@@ -308,5 +329,13 @@
            $('#id_bayar').attr('value', current_date);
        }
    }
+   $('#id_formbon').change(function() {
+    var input = this;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      $('#id_fotobon').attr('src', e.target.result);
+    }
+    reader.readAsDataURL(input.files[0]);
+   })
 </script>
 {% endblock %}
