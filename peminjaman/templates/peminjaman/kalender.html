@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 
 {% block head %}
-<title>Daftar peminjaman</title>
-{% endblock %}
-
-{% block body %}
 <style>
     .table>tbody>tr>td {
         padding: 8px 0;
     }
 </style>
+
+<title>Daftar peminjaman</title>
+{% endblock %}
+
+{% block body %}
 
 <div class="content" id="AppKalender" ng-controller="CalendarDemoCtrl">
     <ul class="breadcrumb" style="margin-bottom: 10px;">
@@ -42,28 +43,17 @@
             <div class="row" style="padding:8px">
                 <div class="col-md-6 col-xs-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="text-align: left; padding-right: 33px">Bulan </span>
-                        <select ng-model="filter_month" ng-options="x.name for x in poss_month" class="form-control input-sm" ng-change="filterEvents('filter')">
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row" style="padding:8px">
-                <div class="col-md-6 col-xs-12">
-                    <div class="input-group">
                         <span class="input-group-addon" style="text-align: left; padding-right: 20px">Tanggal </span>
-                        <select ng-model="filter_day" ng-options="x.name for x in poss_day" class="form-control input-sm" ng-change="filterEvents('filter')">
-                        </select>
+                        <input type="date" ng-model="date_filter" class="form-control input-sm" ng-change="filterEvents('filter')">
                     </div>
                 </div>
             </div>
             <div class="row" style="padding:8px">
                 <div class="col-xs-12">
                     <div class="input-group" style="text-align: left">
-                            <span class="input-group-addon" style="text-align: left">Refresh </span>
-                            <span type="button" class="glyphicon glyphicon-refresh btn btn-link btn-sm" ng-click="filterEvents('filter')" id="calendarRefresh" aria-hidden="true">
-                            </span>
-                        <!-- </span> -->
+                        <span class="input-group-addon" style="text-align: left">Refresh </span>
+                        <span type="button" class="glyphicon glyphicon-refresh btn btn-link btn-sm" ng-click="filterEvents('filter')" id="calendarRefresh" aria-hidden="true">
+                        </span>
                     </div>
                 </div>
             </div>
@@ -89,33 +79,6 @@
 	}).controller('CalendarDemoCtrl',['$scope','$http','$timeout', '$filter', function ($scope, $http, $timeout, $filter) {
         'use strict';
 
-        // create months
-        $scope.poss_month = [
-            {id : "12", name : "Semua"},
-            {id : "00", name : "Januari"},
-            {id : "01", name : "Februari"},
-            {id : "02", name : "Maret"},
-            {id : "03", name : "April"},
-            {id : "04", name : "Mei"},
-            {id : "05", name : "Juni"},
-            {id : "06", name : "Juli"},
-            {id : "07", name : "Agustus"},
-            {id : "08", name : "September"},
-            {id : "09", name : "Oktober"},
-            {id : "10", name : "November"},
-            {id : "11", name : "Desember"},
-            ];
-        $scope.filter_month = $scope.poss_month[0];
-
-        // create days
-        $scope.poss_day = [
-            {id : "0", name : "Semua"}
-        ];
-        for(var i = 1; i <= 31; i++){
-            $scope.poss_day.push({id: i, name: i});
-        }
-        $scope.filter_day = $scope.poss_day[0];
-
         // calendar mode
         $scope.changeMode = function (mode) {
             $scope.mode = mode;
@@ -137,19 +100,30 @@
 		$scope.peminjamanList_GLOBAL = [];
 
         /* Fetching */
-        $scope.peminjamJson = "{% url 'peminjam:json' %}";
-        $scope.ruanganJson = "{% url 'ruangan:json' %}";
+        // $scope.peminjamJson = "{% url 'peminjam:json' %}";
+        // $scope.ruanganJson = "{% url 'ruangan:json' %}";
         $scope.peminjamanFilter = "{% url 'peminjaman:filter_base' %}";
-		$http.get($scope.peminjamJson).success(function(data, status, headers, config) {
-	      	$scope.peminjamList = data.results;
-	    }).error(function(data, status, headers, config) {
-	      	$scope.peminjamList = [];
-	    });
-	    $http.get($scope.ruanganJson).success(function(data, status, headers, config) {
-	      	$scope.ruanganList = data.results;
-	    }).error(function(data, status, headers, config) {
-	      	$scope.ruanganList = [];
-	    });
+        $scope.peminjamList = [];
+        {% for peminjam in all_peminjam %}
+        $scope.peminjamList = $scope.peminjamList.concat({
+            id: {{ peminjam.id }},
+            deskripsi: "{{ peminjam.deskripsi }}",
+            nama: "{{ peminjam.nama }}",
+        });
+        {% endfor %}
+
+        $scope.ruanganList = [];
+        {% for ruangan in all_ruangan %}
+        $scope.ruanganList = $scope.ruanganList.concat({
+            id: {{ ruangan.id }},
+            deskripsi: "{{ ruangan.deskripsi }}",
+            foto:"{{ ruangan.foto }}",
+            nama:"{{ ruangan.nama }}",
+            tipe:"{{ ruangan.tipe }}",
+            warna:"{{ ruangan.warna }}"
+        });
+        {% endfor %}
+        
 		var filterByPeminjam;
 	    function peminjamTampil(e) {
             for (var i in $scope.peminjamList) {
@@ -183,8 +157,22 @@
                 method: 'GET',
                 url :  $scope.peminjamanFilter + year,
             };
+            var tempPeminjaman = [];
+            {% for peminjaman in all_peminjaman %}
+            tempPeminjaman = tempPeminjaman.concat({
+                ruangan_id : "{{ peminjaman.ruangan_id }}",
+                peminjam_id : "{{ peminjaman.peminjam_id }}",
+                waktu_awal : "{{ peminjaman.waktu_awal }}",
+                waktu_akhir : "{{ peminjaman.waktu_akhir }}", // TODO: format date nya ga sama
+                deskripsi : "{{ peminjaman.deskripsi }}",
+                foto : "{{ peminjaman.foto }}"
+            });
+            {% endfor %}
+            console.log(tempPeminjaman[0].waktu_awal);
             $http(req).success(function(data, status, headers, config) {
                 var temp = data.results;
+                // var temp = tempPeminjaman;
+                console.log(temp[0].waktu_awal);
                 angular.forEach(temp, function(value, key){
                     var start_date = new Date(value.waktu_awal);
                     var end_date = new Date(value.waktu_akhir);
@@ -226,12 +214,9 @@
         };
 
         // custom filter function
-        $scope.filterMonths = function(item) {
-            return item.startTime.getMonth() == $scope.filter_month.id;
-        }
-
-        $scope.filterDays = function(item) {
-            return item.startTime.getDate() == $scope.filter_day.id;
+        $scope.filterDate = function(item) {
+            return item.startTime.getDate() <= $scope.date_filter.getDate()
+                && item.endTime.getDate() >= $scope.date_filter.getDate();
         }
         
 		/* Filtering */
@@ -239,6 +224,8 @@
 		$scope.filterPeminjam = "Semua";
 		fetchPeminjaman((new Date()).getFullYear());
 		$scope.filterEvents = function(e) {
+            //console.log($scope.date_filter.getDate());
+
             var events = $scope.peminjamanList_GLOBAL;
             if($scope.filterPeminjam !== "Semua"){
                 events = $filter('filter')(events, {borrower: $scope.filterPeminjam});
@@ -246,11 +233,8 @@
             if($scope.filterRuangan !== "Semua"){
                 events = $filter('filter')(events, {ruangan: $scope.filterRuangan});
             }
-            if($scope.filter_month.id != 12){
-                events = $filter('filter')(events, $scope.filterMonths);
-            }
-            if($scope.filter_day.id != 0){
-                events = $filter('filter')(events, $scope.filterDays);
+            if($scope.date_filter != null){
+                events = $filter('filter')(events, $scope.filterDate);
             }
 
 			$scope.eventSource = events;
@@ -261,7 +245,7 @@
         
         // refresh view
         var currentEvents = $scope.filterEvents();
-        console.log(currentEvents);
+        //console.log(currentEvents);
 		$timeout(function() {
             angular.element(document.getElementById("calendarFilter")).triggerHandler('click');
         },200);
