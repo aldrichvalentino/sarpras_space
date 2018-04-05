@@ -55,7 +55,7 @@
                     <label for="id_tujuan_surat" class="col-lg-3 control-label">Tujuan Surat</label>
                     <div class="col-lg-9">
                       <div class="input-group">
-                        <input type="text" name="tujuan_surat" id="id_tujuan_surat" class="form-control" required/>
+                        <input type="text" name="tujuan_surat" id="id_tujuan_surat" class="form-control" value="{{ tujuan_surat }}" required/>
                       </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                     <label for="id_tempat" class="col-lg-3 control-label">Tempat</label>
                     <div class="col-lg-9">
                         <div class="input-group">
-                            <input type="text" name="tempat" id="id_tempat" class="form-control" value=""/>
+                            <input type="text" name="tempat" id="id_tempat" class="form-control" value="{{ tempat }}"/>
                         </div>
                     </div>
                 </div>
@@ -115,11 +115,11 @@
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="tanggal_tempat_awal" id="id_tanggal_tempat_awal" class="form-control" required/>
+                                <input type="date" name="tanggal_tempat_awal" id="id_tanggal_tempat_awal" class="form-control" value="{{ tanggal_tempat_awal }}" required/>
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 30px">Waktu</span>
-                                <input type="time" name="waktu_tempat_awal" id="id_waktu_tempat_awal" class="form-control" value="00:00" required/>
+                                <input type="time" name="waktu_tempat_awal" id="id_waktu_tempat_awal" class="form-control" value="{{ waktu_tempat_awal }}" required/>
                             </div>
                         </div>
                     </div>
@@ -131,11 +131,11 @@
                         <div class="input-group">
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 10px">Tanggal</span>
-                                <input type="date" name="tanggal_tempat_akhir" id="id_tanggal_tempat_akhir" class="form-control" required/>
+                                <input type="date" name="tanggal_tempat_akhir" id="id_tanggal_tempat_akhir" class="form-control" value="{{ tanggal_tempat_akhir }}" required/>
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon" style="padding-right: 25px">Waktu</span>
-                                <input type="time" name="waktu_tempat_akhir" id="id_waktu_tempat_akhir" class="form-control" value="00:00" required/>
+                                <input type="time" name="waktu_tempat_akhir" id="id_waktu_tempat_akhir" class="form-control" value="{{ waktu_tempat_akhir }}" required/>
                             </div>
                         </div>
                     </div>
@@ -192,7 +192,7 @@
                     <label class="col-lg-1 control-label">Rp. </label>
                     <div class="col-lg-4">
                         <div class="input-group">
-                            <input type="number" step="1" min="0" name="biaya_tempat" id="id_biaya_tempat" class="form-control" value="0" required/>
+                            <input type="number" step="1" min="0" name="biaya_tempat" id="id_biaya_tempat" class="form-control" value="{{ biaya_tempat }}" required/>
                         </div>
                     </div>
                     <label class="col-lg-2 control-label">,- per hari</label>
@@ -278,8 +278,6 @@
     $('#id_tanggal_surat').val(todayString);
     $('#id_tanggal_tl').val(todayString);
     $('#id_terima_tl').val(todayString);
-    $('#id_tanggal_tempat_awal').val(todayString);
-    $('#id_tanggal_tempat_akhir').val(todayString);
     $('#id_tanggal_fasilitas_awal').val(todayString);
     $('#id_tanggal_fasilitas_akhir').val(todayString);
 </script>

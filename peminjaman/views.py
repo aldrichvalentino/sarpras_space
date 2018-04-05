@@ -402,12 +402,36 @@ def formedit(request, peminjaman_id = 0):
     })
 
 @login_required
-def formprint(request):
-    return render(request, 'peminjaman/print.html')
+def formprint(request, peminjaman_id=0):
+	if peminjaman_id != 0:	
+		obj_peminjaman = Peminjaman.objects.get(id=peminjaman_id)
+		tujuan_surat = obj_peminjaman.peminjam.nama
+		tempat = obj_peminjaman.ruangan.nama
+		biaya_tempat = obj_peminjaman.ruangan.harga
+		tanggal_tempat_awal = obj_peminjaman.waktu_awal.strftime('%Y-%m-%d')
+		tanggal_tempat_akhir = obj_peminjaman.waktu_akhir.strftime('%Y-%m-%d')
+		waktu_tempat_awal = obj_peminjaman.waktu_awal.strftime('%H:%M')
+		waktu_tempat_akhir = obj_peminjaman.waktu_akhir.strftime('%H:%M')
+	else:
+		tujuan_surat = ''
+		tempat = ''
+		biaya_tempat = 0
+		tanggal_tempat_awal = datetime.today().strftime('%Y-%m-%d')
+		tanggal_tempat_akhir = datetime.today().strftime('%Y-%m-%d')
+		waktu_tempat_awal = '00:00'
+		waktu_tempat_akhir = '00:00'
+		
+	return render(request, 'peminjaman/print.html', {
+		'tujuan_surat': tujuan_surat, 
+		'tempat': tempat,
+		'biaya_tempat': biaya_tempat, 
+		'tanggal_tempat_awal': tanggal_tempat_awal,
+		'tanggal_tempat_akhir': tanggal_tempat_akhir,
+		'waktu_tempat_awal': waktu_tempat_awal,
+		'waktu_tempat_akhir': waktu_tempat_akhir})
 
 @login_required
 def printfile(request):
-
     nama_file = request.POST.get('nama_file')
     nomor_surat = request.POST.get('nomor_surat')
     tahun_surat = request.POST.get('tahun_surat', datetime.today().year)

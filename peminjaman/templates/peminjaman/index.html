@@ -156,6 +156,7 @@ peminjamanList.controller("peminjamanListController", function($scope, $http, $f
                     waktu_bayar:    value.waktu_bayar,
                     deskripsi:      value.deskripsi,
 
+					print_link:		"{% url 'peminjaman:printbase' %}" + value.id,
                     edit_link:      "{% url 'peminjaman:editbase' %}" + value.id,
                     delete_link:    "{% url 'peminjaman:deletebase' %}" + value.id
                 });
@@ -497,6 +498,7 @@ $(document).ready(function () {
                        <th ng-click="sort('jumlah_tagihan')" ng-class="sortClass('jumlah_tagihan')">Tagihan</th>
                        <th ng-click="sort('waktu_bayar')" ng-class="sortClass('waktu_bayar')">Waktu Bayar</th>
                        <th ng-click="sort('deskripsi')" ng-class="sortClass('deskripsi')">Description</th>
+                       <th>Action</th>
                    </tr>
 
                    <tr ng-repeat = "peminjamanData in peminjamanFiltered = (peminjamanListData | orderBy : column : reverse | filter:filterTipe | filter:{peminjam:filterPeminjam}
@@ -510,6 +512,7 @@ $(document).ready(function () {
 	                    <td>{[{ peminjamanData.jumlah_tagihan }]}</td>
 	                    <td ng-click="togglePembayaran(peminjamanData)" style="cursor: pointer">{[{ peminjamanData.waktu_bayar | date:'dd MMM yyyy' }]}</td>
 	                    <td>{[{ peminjamanData.deskripsi }]}</td>
+	                    <td ng-click="go(peminjamanData.print_link)"><a href="#">Print</a></td>
 
                 	</tr>
                 </table>
