@@ -22,6 +22,7 @@ def formadd(request):
 
     # Inisiasi variabel berdasarkan post jika ada
     new_nama = request.POST.get("nama",'')
+    new_tipe = request.POST.get("tipe",'')
     new_deskripsi = request.POST.get("deskripsi",'')
     error = []
     message = []
@@ -41,7 +42,8 @@ def formadd(request):
         if not error:
             new_peminjam = Peminjam(
                 nama=new_nama,
-                deskripsi=new_deskripsi
+                deskripsi=new_deskripsi,
+                tipe=new_tipe
             )
 
             # Berusaha menyimpan perubahan dan redirect ke Index jika berhasil
@@ -57,6 +59,7 @@ def formadd(request):
         'error': error,
         'message': message,
         'nama': new_nama,
+        'tipe': new_tipe,
         'deskripsi': new_deskripsi
     })
 
@@ -74,6 +77,7 @@ def formedit(request, peminjam_id = 0):
     # Inisiasi variabel berdasarkan post jika ada
     new_nama = request.POST.get("nama",selected_peminjam.nama)
     new_deskripsi = request.POST.get("deskripsi",selected_peminjam.deskripsi)
+    new_tipe = request.POST.get("tipe",selected_peminjam.tipe)
     error = []
     message = []
 
@@ -92,6 +96,7 @@ def formedit(request, peminjam_id = 0):
         if not error:
             selected_peminjam.nama = new_nama
             selected_peminjam.deskripsi = new_deskripsi
+            selected_peminjam.tipe = new_tipe
 
             # Berusaha menyimpan perubahan dan redirect ke Index jika berhasil
             try:

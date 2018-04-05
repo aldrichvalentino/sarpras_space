@@ -9,7 +9,7 @@
 	table th:hover {
 		cursor: pointer;
 	}
-	
+
 	.arrow-down:after,.arrow-up:after {
 		content: ' ';
 		position: relative;
@@ -44,15 +44,43 @@
   		$interpolateProvider.endSymbol('}]}');
 	});
 	peminjamList.controller("peminjamListController", function($scope, $location) {
-		
+
 		$scope.peminjamListData = [];
+		$scope.fakultas = [];
+		$scope.ukm = [];
+		$scope.uka = [];
+
 		{% for peminjam in all_peminjam %}
 		$scope.peminjamListData = $scope.peminjamListData.concat({
 			id: "{{ peminjam.id }}",
 			nama:"{{ peminjam.nama }}",
+			tipe:"{{ peminjam.tipe }}",
 			deskripsi:"{{ peminjam.deskripsi }}",
 			edit_link: "{% url 'peminjam:edit' peminjam.id %}"
 		});
+
+		{% if peminjam.tipe == "Fakultas-Prodi" %}
+		$scope.fakultas = $scope.fakultas.concat({
+			id: "{{ peminjam.id }}",
+			nama:"{{ peminjam.nama }}"
+		});
+		{% endif %}
+
+		{% if peminjam.tipe == "UKM" %}
+		$scope.ukm = $scope.ukm.concat({
+			id: "{{ peminjam.id }}",
+			nama:"{{ peminjam.nama }}"
+		});
+		{% endif %}
+
+		{% if peminjam.tipe == "UKA" %}
+		$scope.uka = $scope.uka.concat({
+			id: "{{ peminjam.id }}",
+			nama:"{{ peminjam.nama }}"
+		});
+		{% endif %}
+
+
 		{% endfor %}
 
 		$scope.go = function ( path ) {
@@ -69,19 +97,21 @@
             }
         };
 		*/
-		
+
 		/* EXPERIMENTAL CODE (Add arrow-down and arrow-up) */
-		
+
 		// column state
 		$scope.column = 'id';
-		
+
+		$scope.filterTipe = "";
+
 		// sort ordering (Ascending or Descending). True for Descending
-		$scope.reverse = false; 
-		
+		$scope.reverse = false;
+
 		$scope.sort = function ( coll ) {
-		
+
 			$scope.column = coll;
-		
+
 			if ($scope.reverse) {
 				$scope.reverse = false;
 				$scope.reverseclass = 'arrow-up';
@@ -89,14 +119,14 @@
 				$scope.reverse = true;
 				$scope.reverseclass = 'arrow-down';
 			}
-			
+
         };
-		
+
 		// change the arrow direction
 		$scope.sortClass = function(col) {
 			if ($scope.column == col) {
 				if ($scope.reverse) {
-					return 'arrow-down'; 
+					return 'arrow-down';
 				} else {
 					return 'arrow-up';
 				}
@@ -105,11 +135,35 @@
 			}
 		};
 
-	});
+		//TODO: Lengkapi list fakultas-prodi
+		/*$scope.fakultas = [
+		{key: '', value:''},
+		{key: 'STEI-Teknik Elektro', value: 'STEI-Teknik Elektro'},
+		{key: 'STEI-Teknik Informatika', value: 'STEI-Teknik Informatika'},
+		{key: 'Lainnya', value:''}
+	];*/
+
+	//TODO: Lengkapi list UKM
+		/*$scope.ukm = [
+			{key: '', value:''},
+			{key: 'Himpunan Mahasiswa Informatika (HMIF)', value: 'Himpunan Mahasiswa Informatika (HMIF)'},
+			{key: 'Himpunan Mahasiswa Elektroteknik (HME)', value: 'Himpunan Mahasiswa Elektroteknik (HME)'},
+			{key: 'Ikatan Mahasiswa Telekomunikasi (IMT)', value: 'Ikatan Mahasiswa Telekomunikasi (IMT)'},
+			{key: 'Lainnya', value:''}
+
+
+	];*/
+
+	//TODO: Lengkapi list UKA
+	/*$scope.uka =[''];*/
+});
+
+
 	$(document).ready(function () {
         $(".nav li").removeClass("active");
         $('#peminjam').addClass('active');
     });
+
 </script>
 
 <div ng-app="peminjamList" ng-controller="peminjamListController">
@@ -128,17 +182,32 @@
 		<!-- EXPERIMENT -->
 		<div class="container-fluid" style="margin-bottom: 10px;margin-top: 10px">
             <div class="row well well-sm">
-                
-				<div class="form-group col-lg-2 col-md-6 col-sm-12">
-                	<span><b>Filter Nama</b></span>
-					<input type="text" name="nama" id="id_nama" class="form-control input-sm" ng-model = "filterNama"/>
-                </div>
-				
-			</div>
+							<div class="form-group col-lg-2 col-md-6 col-sm-6">
+												<span><b>Filter Type</b></span>
+												<select ng-model="filterTipe" id="id_tipe" class="form-control input-sm">
+									<option value="">Semua</option>
+									<option value="Fakultas-Prodi">Fakultas-Prodi</option>
+									<option value="UKA">UKA</option>
+									<option value="UKM">UKM</option>
+								</select>
+							</div>
+
+				<div  class="form-group col-lg-2 col-md-6 col-sm-12">
+                	<span><b>Filter nama</b></span>
+									<select ng-model="filterNama" name="nama" id="id_nama" class="form-control input-sm" ng-switch="filterTipe">
+												<option value="" selected>Semua</option>
+												<option ng-repeat="peminjam in fakultas" value="{[{peminjam.nama}]}" ng-switch-when="Fakultas-Prodi">{[{peminjam.nama}]}</option>
+												<option ng-repeat="peminjam in uka" value="{[{peminjam.nama}]}" ng-switch-when="UKA">{[{peminjam.nama}]}</option>
+											<option ng-repeat="peminjam in ukm" value="{[{peminjam.nama}]}" ng-switch-when="UKM">{[{peminjam.nama}]}</option>
+											<option ng-repeat="peminjam in peminjamListData" value="{[{peminjam.nama}]}" ng-switch-when="">{[{peminjam.nama}]}</option>
+					</select>
+				</div>
+				</div>
+
 		</div>
 		<!-- END OF EXPERIMENT -->
-		
-		
+
+
         <div class="row">
             <div class="col-lg-10">
                 <div class="table-responsive">
@@ -146,15 +215,17 @@
                         <thead>
                             <tr>
                                 <th ng-click="sort('nama')" ng-class="sortClass('nama')">Nama</th>
+																<th ng-click="sort('tipe')" ng-class="sortClass('tipe')">Tipe</th>
                                 <th ng-click="sort('deskripsi')" ng-class="sortClass('deskripsi')">Deskripsi</th>
-                            </tr> 
+                            </tr>
                         </thead>
                         <tbody>
-							<tr ng-repeat = "peminjamData in peminjamListData | orderBy : column : reverse | filter:{id:filterId} | filter:{nama:filterNama}">
+							<tr ng-repeat = "peminjamData in peminjamListData | orderBy : column : reverse | filter:{tipe:filterTipe} | filter:{nama:filterNama}">
 
                                 <td ng-click="go(peminjamData.edit_link)"><a href="#">{[{ peminjamData.nama }]}</a></td>
+																<td>{[{ peminjamData.tipe }]}</td>
                                <td>{[{ peminjamData.deskripsi }]}</td>
-							
+
 							</tr>
                         </tbody>
                     </table>
@@ -177,4 +248,3 @@
 </div>
 
 {% endblock %}
-
