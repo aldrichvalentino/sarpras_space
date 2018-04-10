@@ -168,11 +168,10 @@
                 foto : "{{ peminjaman.foto }}"
             });
             {% endfor %}
-            console.log(tempPeminjaman[0].waktu_awal);
+            
             $http(req).success(function(data, status, headers, config) {
                 var temp = data.results;
                 // var temp = tempPeminjaman;
-                console.log(temp[0].waktu_awal);
                 angular.forEach(temp, function(value, key){
                     var start_date = new Date(value.waktu_awal);
                     var end_date = new Date(value.waktu_akhir);
